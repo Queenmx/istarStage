@@ -1,0 +1,37 @@
+// .van-button--primary {
+//     background-color: $blue;
+//     border: 1px solid $blue;
+// }
+.btnBox,
+.apply {
+    text-align: center;
+    button {
+      width: rem(620px);
+      margin: 0 auto;
+      border-radius: rem(50px);
+      margin-bottom: rem(40px);
+      font-size: rem(30px);
+      height: rem(80px);
+    }
+}
+.btnBox{
+    margin-top: rem(140px);
+}
+.cardtitle {
+    line-height: rem(100px);
+    color: $lightBlack;
+    font-size: rem(30px);
+    background: #fff;
+    span {
+      &::before {
+        content: "";
+        width: rem(8px);
+        height: rem(30px);
+        display: inline-block;
+        background: $orange;
+        vertical-align: middle;
+        margin-right: rem(15px);
+      }
+    }
+}
+

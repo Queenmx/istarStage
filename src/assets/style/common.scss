@@ -1,0 +1,100 @@
+$blue: #0074e4;
+$black: #494949;
+$lightBlack: #464646;
+$grey: #b2b4bb;
+$lightGrey: #767676;
+$bdcolor: #eeeeee;
+$bgcolor: #f8f8f8;
+$red: #f71d54;
+$orange:#ff9700;
+$fontGrey:#bbb;
+a {
+  color: $black;
+  text-decoration: none;
+}
+body {
+  background: $bgcolor;
+}
+.router-link-active {
+  color: $black;
+  text-decoration: none;
+}
+.btn-blue {
+  color: #fff;
+  background: $blue;
+}
+@function rem($px) {
+  $default-font-size: 75px;
+  @return ($px / $default-font-size) + rem;
+}
+@mixin icon($w, $h) {
+  display: inline-block;
+  width: rem($w);
+  height: rem($h);
+  vertical-align: middle;
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+@mixin box-shadow($shadow...) {
+    -webkit-box-shadow: $shadow;
+    -moz-box-shadow: $shadow;
+    box-shadow: $shadow;
+}
+.wrap {
+  padding-left: rem(30px);
+  padding-right: rem(30px);
+}
+.whitebg{
+    background: #fff
+}
+.container{
+    padding-top: rem(95px);
+    padding-bottom: 50px;
+    font-size: rem(30px);
+}
+.flex {
+  display: flex;
+  align-items: center;
+  .rest {
+    flex: 1;
+  }
+}
+.textright{
+    text-align: right;
+    vertical-align: middle
+}
+.textcenter{
+    text-align: center;
+}
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.none {
+  padding-top: rem(30px);
+  text-align: center;
+  font-size: rem(28px);
+  color: $grey;
+}
+.inblock {
+  display: inline-block;
+}
+.card{
+    background: #fff;
+    color: #686868;
+    border-radius: rem(10px);
+    font-size: rem(30px);
+    padding: 0 rem(40px);
+}
+.van-button--bottom-action{
+    position: fixed;
+    bottom:0;
+    left: 0;
+    right: 0;
+}
+.van-cell{
+    padding-top: rem(35px);
+    padding-bottom: rem(35px);
+    font-size: rem(30px);
+}
