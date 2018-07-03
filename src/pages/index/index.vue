@@ -1,7 +1,7 @@
 <template>
     <div class="index">
         <v-header>
-            <i slot="left"><van-icon name="contact" /></i>
+            <i slot="left"><van-icon name="contact" @click='personcenter'/></i>
             <i slot="right"><van-icon name="chat" /></i>
         </v-header>
         <div class="container">
@@ -81,6 +81,10 @@ export default {
     },
     toDetail() {
       this.$router.push({ path: "/progress" });
+    },
+    //去往个人中心
+    personcenter(){
+      this.$router.push({ path: "/index/personcenter" });
     }
   }
 };

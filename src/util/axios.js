@@ -3,21 +3,26 @@ import Qs from "qs";
 import { baseUrl, KEY } from "../config";
 import { strEnc, strDec } from "./aes.js";
 axios.interceptors.request.use(config => {    // 这里的config包含每次请求的内容
-    // 判断localStorage中是否存在api_token
-    if (localStorage.getItem('api_token')) {
-        //  存在将api_token写入 request header
-        config.headers.apiToken = `${localStorage.getItem('api_token')}`;
+    config = {
+        appKey: 1,
+        sign: "",
+        timestamp: new Date().valueOf(),
+        data: config
     }
+    // 判断localStorage中是否存在api_token
+    // if (localStorage.getItem('api_token')) {
+    //     //  存在将api_token写入 request header
+    //     config.headers.apiToken = `${localStorage.getItem('api_token')}`;
+    // }
     return config;
 }, err => {
     return Promise.reject(err);
 });
-axios.interceptors.response.use(response => {
-    return response
-}, error => {
-    return Promise.resolve(error.response)
-});
-
+// axios.interceptors.response.use(response => {
+//     return response
+// }, error => {
+//     return Promise.resolve(error.response)
+// });
 
 function fetch(url, params) {
     return new Promise((resolve, reject) => {
@@ -26,7 +31,7 @@ function fetch(url, params) {
         axios
             .post(baseUrl + url, Qs.stringify(params), {
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "ACCESS_TOKEN": localStorage.getItem('api_token')
                 }
             })
             .then(function (response) {
@@ -46,4 +51,3 @@ export const getUser = params => {
     params = JSON.stringify(params);
     return fetch("user/userInfo", { params });
 };
-

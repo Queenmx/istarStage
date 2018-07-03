@@ -8,6 +8,12 @@ import certification from '@/pages/certification'
 import index from '@/pages/index'
 import product from '@/pages/index/product'
 import productdetail from '@/pages/index/productdetail'
+import personcenter from '@/pages/index/personcenter'
+import setting from '@/pages/index/setting'
+import respwd from '@/pages/index/respwd'
+import question from '@/pages/index/question'
+import opinion from '@/pages/index/opinion'
+
 import certAuth from '@/pages/application/cert_auth'
 import applyInfo from '@/pages/application/apply_info'
 import otherInfo from '@/pages/application/other_info'
@@ -57,6 +63,28 @@ const router = new Router({
             component: productdetail
         },
         {
+            path: '/index/personcenter',
+            component: personcenter
+        },
+        {
+            path: '/index/setting',
+            component: setting
+        },
+        {
+            path: '/index/respwd',
+            component: respwd
+        },
+        {
+            path: '/index/question',
+            component: question
+        },
+        {
+            path: '/index/opinion',
+            component: opinion
+        },
+
+
+        {
             path: '/application/cert_auth',
             component: certAuth
         },
@@ -105,7 +133,8 @@ const router = new Router({
         return { x: 0, y: 0 };
     }
 })
-import { getItem } from "../util/util";
+import { getItem, setItem } from "../util/util";
+setItem("userInfo",{'phone':'1232321321323'})
 router.beforeEach((to, from, next) => {
     if (to.path !== "/login" && !getItem("userInfo")) {
         // this route requires auth, check if logged in
