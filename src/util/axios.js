@@ -1,3 +1,5 @@
+
+import Vue from 'vue'
 import axios from "axios";
 import Qs from "qs";
 import { baseUrl, KEY } from "../config";
@@ -22,6 +24,8 @@ function fetch(url, params) {
             .then(function (response) {
                 if (response.data.code == 200) {
                     response.data.data = JSON.parse(strDec(response.data.data, KEY));
+                } else if (response.data.code == 403) {
+                    this.$router.push({ path: '/login' })
                 }
                 resolve(response.data);
             })
