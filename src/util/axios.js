@@ -2,35 +2,6 @@ import axios from "axios";
 import Qs from "qs";
 import { baseUrl, KEY } from "../config";
 import { strEnc, strDec } from "./aes.js";
-axios.interceptors.request.use(
-  config => {
-    console.log(config);
-    // 这里的config包含每次请求的内容
-    // config.data.appKey = 1;
-    // config.data.sign = 1;
-    // config.data.timestamp = new Date().valueOf();
-    // config = {
-    //   appKey: 1,
-    //   sign: "",
-    //   timestamp: new Date().valueOf(),
-    //   data: config
-    // };
-    // 判断localStorage中是否存在api_token
-    // if (localStorage.getItem('api_token')) {
-    //     //  存在将api_token写入 request header
-    //     config.headers.apiToken = `${localStorage.getItem('api_token')}`;
-    // }
-    return config;
-  },
-  err => {
-    return Promise.reject(err);
-  }
-);
-// axios.interceptors.response.use(response => {
-//     return response
-// }, error => {
-//     return Promise.resolve(error.response)
-// });
 
 function fetch(url, params) {
   return new Promise((resolve, reject) => {
