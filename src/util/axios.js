@@ -3,12 +3,12 @@ import Qs from "qs";
 import { baseUrl, KEY } from "../config";
 import { strEnc, strDec } from "./aes.js";
 axios.interceptors.request.use(config => {    // 这里的config包含每次请求的内容
-    config = {
-        appKey: 1,
-        sign: "e67a3e7ee713152b57b3cd6429f06ba2",
-        timestamp: "000",
-        data: config
-    }
+    // config = {
+    //     appKey: 1,
+    //     sign: "e67a3e7ee713152b57b3cd6429f06ba2",
+    //     timestamp: "000",
+    //     data: config
+    // }
     // 判断localStorage中是否存在api_token
     // if (localStorage.getItem('api_token')) {
     //     //  存在将api_token写入 request header
