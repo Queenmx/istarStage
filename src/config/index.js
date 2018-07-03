@@ -1,14 +1,12 @@
-let baseUrl,
-  baseUrl2 = "";
+let baseUrl;
 let routerMode = "history";
 let imgBaseUrl = "http://xrjf.oss-cn-shanghai.aliyuncs.com/";
-const KEY = "XFS20180504XCRMM";
+const KEY = "pro-1530002889-d";
 if (process.env.NODE_ENV === "development") {
-  baseUrl = "http://wuhanxingrong.vicp.io:8890/";
+    baseUrl = "http://whxr.free.ngrok.cc";
 } else if (process.env.NODE_ENV === "production") {
-  baseUrl = "http://fsapi.starjrcs.com:8887/";
-  baseUrl2 = "http://marketoa.istarcredit.com:8185/"; //正式地址
+    baseUrl = "http://fsapi.starjrcs.com:8887/";//正式地址
 } else if (process.env.NODE_ENV === "testing") {
-  baseUrl = "http://wuhanxingrong.vicp.io:8890/"; //测试地址
+    baseUrl = "http://wuhanxingrong.vicp.io:8890/"; //测试地址
 }
-export { baseUrl, baseUrl2, routerMode, imgBaseUrl, KEY };
+export { baseUrl, routerMode, imgBaseUrl, KEY };

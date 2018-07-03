@@ -5,8 +5,8 @@ import { strEnc, strDec } from "./aes.js";
 axios.interceptors.request.use(config => {    // 这里的config包含每次请求的内容
     config = {
         appKey: 1,
-        sign: "",
-        timestamp: new Date().valueOf(),
+        sign: "e67a3e7ee713152b57b3cd6429f06ba2",
+        timestamp: "000",
         data: config
     }
     // 判断localStorage中是否存在api_token
@@ -18,16 +18,11 @@ axios.interceptors.request.use(config => {    // 这里的config包含每次请�
 }, err => {
     return Promise.reject(err);
 });
-// axios.interceptors.response.use(response => {
-//     return response
-// }, error => {
-//     return Promise.resolve(error.response)
-// });
 
 function fetch(url, params) {
     return new Promise((resolve, reject) => {
         //这里做加密
-        params.params = strEnc(params.params, KEY);
+        params.data = strEnc(params.data, KEY);
         axios
             .post(baseUrl + url, Qs.stringify(params), {
                 headers: {
@@ -36,7 +31,7 @@ function fetch(url, params) {
             })
             .then(function (response) {
                 if (response.data.data !== null) {
-                    response.data.data = JSON.parse(strDec(response.data.data, KEY));
+                    // response.data.data = JSON.parse(strDec(response.data.data, KEY));
                 }
 
                 resolve(response.data);
@@ -50,4 +45,9 @@ function fetch(url, params) {
 export const getUser = params => {
     params = JSON.stringify(params);
     return fetch("user/userInfo", { params });
+};
+// 设置新密码
+export const updatePwd = params => {
+    let data = JSON.stringify(params);
+    return fetch("/base/updatePwd", { data });
 };
