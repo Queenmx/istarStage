@@ -1,7 +1,7 @@
 let baseUrl;
 let routerMode = "history";
 let imgBaseUrl = "http://xrjf.oss-cn-shanghai.aliyuncs.com/";
-const KEY = "pro-1530002889-d";
+const KEY = "JJPT@20200606@H5";
 if (process.env.NODE_ENV === "development") {
     baseUrl = "http://whxr.free.ngrok.cc";
 } else if (process.env.NODE_ENV === "production") {
