@@ -43,7 +43,6 @@ export default {
   methods: {
     async updatePwd() {
       let data = {
-        supervisorId: this.userInfo.supervisorId,
         cusPassword: this.oldPwd,
         newPwd: this.newPwd
       };

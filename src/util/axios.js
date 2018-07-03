@@ -38,5 +38,10 @@ export const getUser = params => {
 // 设置新密码
 export const updatePwd = params => {
     params = JSON.stringify(params);
-    return fetch("/base/updatePwd", { params });
+    return fetch("base/updatePwd", { params });
+};
+// 意见反馈
+export const addOpinion = params => {
+    params = JSON.stringify(params);
+    return fetch("other/addOpinionFeedback", { params });
 };
