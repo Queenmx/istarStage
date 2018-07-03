@@ -47,11 +47,14 @@ export default {
             feedbackComtent:this.content
           };
           let res = await addOpinion(data);
-          this.$toast(res.msg);
+          
           if(res.code==200){
             that.flag=false
-            this.$toast("提交成功");
-            history.go(-1);
+            this.$toast(res.msg,2000);
+            setTimeout(function(){
+              history.go(-1);
+            },1000)
+           
           }else{
             that.flag=false
             this.$toast(res.msg);
