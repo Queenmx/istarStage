@@ -102,7 +102,7 @@ export const allVisitNum = params => {
 // 修改密码
 export const updatePwd = params => {
   params = JSON.stringify(params);
-  return fetch("user/updatePwd", { params });
+  return fetch("base/updatePwd", { params });
 };
 // 更改头像
 export const userHead = params => {

@@ -1,7 +1,7 @@
-// .van-button--primary {
-//     background-color: $blue;
-//     border: 1px solid $blue;
-// }
+.van-button--primary {
+    background-color: $blue;
+    border: 1px solid $blue;
+}
 .btnBox,
 .apply {
     text-align: center;
@@ -12,6 +12,7 @@
       margin-bottom: rem(40px);
       font-size: rem(30px);
       height: rem(80px);
+      line-height:rem(80px);
     }
 }
 .btnBox{
