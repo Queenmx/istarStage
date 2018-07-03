@@ -24,7 +24,7 @@ export default {
         { title: "常见问题", url: "/index/question" },
         { title: "分享好友", url: "" },
         { title: "意见反馈", url: "/index/opinion" },
-        { title: "关于我们", url: "" },
+        { title: "关于我们", url: "/index/aboutus" },
         { title: "当前版本", url: "" },
         
       ],

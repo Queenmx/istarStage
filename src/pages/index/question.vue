@@ -19,7 +19,7 @@ export default {
     return {
       title:'常见问题',
       moreInfo: [
-        { title: "如何申请借款", url: "" },
+        { title: "如何申请借款", url: "/index/quesDetail" },
         { title: "如何还款", url: "" },
        
         
@@ -55,11 +55,7 @@ export default {
     @include icon(20px,38px);
     background-image: url("../../assets/images/right.png");
   }
-  .logout {
-    margin-top: rem(78px);
-    line-height: rem(95px);
-    text-align: center;
-  }
+
 }
 </style>
 
