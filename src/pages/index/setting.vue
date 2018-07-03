@@ -27,7 +27,7 @@ export default {
       userInfo: getItem("userInfo"),
       moreInfo: [
         { title: "修改登录密码", url: "/index/respwd" },
-        { title: "更改手机号码", url: "" },
+        { title: "更改手机号码", url: "/index/changetel" },
         
         
       ],

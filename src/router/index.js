@@ -13,6 +13,7 @@ import setting from '@/pages/index/setting'
 import respwd from '@/pages/index/respwd'
 import question from '@/pages/index/question'
 import opinion from '@/pages/index/opinion'
+import changetel from '@/pages/index/changetel'
 
 import certAuth from '@/pages/application/cert_auth'
 import applyInfo from '@/pages/application/apply_info'
@@ -81,6 +82,10 @@ const router = new Router({
         {
             path: '/index/opinion',
             component: opinion
+        },
+        {
+            path: '/index/changetel',
+            component: changetel
         },
 
 
