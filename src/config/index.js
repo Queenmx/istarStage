@@ -3,7 +3,7 @@ let routerMode = "history";
 let imgBaseUrl = "http://xrjf.oss-cn-shanghai.aliyuncs.com/";
 const KEY = "JJPT@20200606@H5";
 if (process.env.NODE_ENV === "development") {
-    baseUrl = "http://whxr.free.ngrok.cc";
+    baseUrl = "http://whxr.free.ngrok.cc/";
 } else if (process.env.NODE_ENV === "production") {
     baseUrl = "http://fsapi.starjrcs.com:8887/";//正式地址
 } else if (process.env.NODE_ENV === "testing") {
