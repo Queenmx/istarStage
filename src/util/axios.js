@@ -22,8 +22,11 @@ function fetch(url, params) {
                 }
             })
             .then(function (response) {
-                if (response.data.code == 200) {
-                    response.data.data = JSON.parse(strDec(response.data.data, KEY));
+                if (response.data.code == 200) {    
+                    if(response.data.data){
+                        response.data.data = JSON.parse(strDec(response.data.data, KEY));
+                    }                                  
+                    console.log(response.data.data);
                 } else if (response.data.code == 403) {
                     this.$router.push({ path: '/login' })
                 }
@@ -37,10 +40,20 @@ function fetch(url, params) {
 //用户登录接口
 export const getUser = params => {
     params = JSON.stringify(params);
-    return fetch("user/userInfo", { params });
+    return fetch("base/pwdLogin", { params });
 };
 // 设置新密码
 export const updatePwd = params => {
     params = JSON.stringify(params);
-    return fetch("/base/updatePwd", { params });
+    return fetch("base/updatePwd", { params });
+};
+// 意见反馈
+export const addOpinion = params => {
+    params = JSON.stringify(params);
+    return fetch("other/addOpinionFeedback", { params });
+};
+//发送验证码
+export const sendValidateCode = params => {
+    params = JSON.stringify(params);
+    return fetch("base/sendValidateCode", { params });
 };

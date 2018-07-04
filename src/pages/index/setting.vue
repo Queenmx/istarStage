@@ -5,7 +5,7 @@
            <section>
              <div class="wrap flex item">
                   <span class="rest title black">账户</span>
-                  <span class="phonenum">{{userInfo.phone}}</span>     
+                  <span class="phonenum">{{userInfo.cusPhone}}</span>     
               </div>
               <router-link class="wrap flex item" v-for="(item,index) in moreInfo" :key="index" :to="item.url">
                   <span class="rest title black">{{item.title}}</span>
@@ -27,7 +27,7 @@ export default {
       userInfo: getItem("userInfo"),
       moreInfo: [
         { title: "修改登录密码", url: "/index/respwd" },
-        { title: "更改手机号码", url: "/index/changetel" },
+        // { title: "更改手机号码", url: "/index/changetel" },
         
         
       ],
@@ -38,7 +38,7 @@ export default {
   },
   methods: {
    exit(){
-      // delItem("userInfo");
+      delItem("userInfo");
       this.$router.push({ path: "/login" });
    }
   }

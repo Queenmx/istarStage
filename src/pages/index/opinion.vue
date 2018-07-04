@@ -16,6 +16,8 @@
 </template>
 <script>
 import {  setItem } from "@/util/util.js";
+import { addOpinion } from "@/util/axios";
+
 export default {
   data() {
     return {
@@ -30,7 +32,7 @@ export default {
   },
   methods: {
 
-    submitAsk: function () {
+    async  submitAsk () {
         var content = this.content;
         
         var that=this;
@@ -40,42 +42,24 @@ export default {
         }else if(content.length==0){
           this.$toast("请输入内容");
         }else{
-          that.flag=true               
-          // if (this.state.fromWho == "help") {//反馈建议
-          //     api.feedBackAdd(content, function (res) {
-          //         //console.log('feedBackAdd',res);
-          //         if (res.code == "0000") {
-          //           that.flag=false
-          //             this.$toast("提交成功", 2);
-          //             // window.history.back();
-          //             history.go(-1);
-          //         } else {
-          //           that.flag=false
-          //             this.$toast(res.msg, 2);
-          //         }
-          //     }, function () {
-          //       that.flag=false;
-          //         this.$toast("连接错误", 2);
-          //     })
-          // } else {//提问问题
-          //     var objId = this.props.location.query.objId;
-          //     var objType = this.props.location.query.objType;
-          //     api.questionAdd(content, objId, objType, function (res) {
-          //         // console.log('questionAdd',res);
-          //         if (res.code == "0000") {
-          //         that.flag=false
-          //             this.$toast("提交成功", 2);
-          //             //window.history.back();
-          //             history.go(-1);
-          //         } else {
-          //         that.flag=false
-          //             this.$toast(res.msg, 2);
-          //         }
-          //     }, function () {
-          //     that.flag=false
-          //         this.$toast("连接错误", 2);
-          //     })
-          // }
+          that.flag=true;
+          let data = {
+            feedbackComtent:this.content
+          };
+          let res = await addOpinion(data);
+          
+          if(res.code==200){
+            that.flag=false
+            this.$toast(res.msg,2000);
+            setTimeout(function(){
+              history.go(-1);
+            },1000)
+           
+          }else{
+            that.flag=false
+            this.$toast(res.msg);
+          }
+
         }
         	
 

@@ -42,8 +42,8 @@ export default {
   mounted() {},
   methods: {
     async updatePwd() {
+      var that=this;
       let data = {
-        supervisorId: this.userInfo.supervisorId,
         cusPassword: this.oldPwd,
         newPwd: this.newPwd
       };
@@ -53,9 +53,16 @@ export default {
         this.$toast("请输入新密码");
       } else if (this.newPwd != this.resNewPwd) {
         this.$toast("新密码输入不一致");
-      } else {
+      } else {        
         let res = await updatePwd(data);
-        this.$toast(res.msg);
+        if(res.code==200){
+          this.$toast(res.msg);
+          setTimeout(function(){
+            that.$router.push({ path: "/index/personcenter"});
+          },2000)
+          
+        }
+        
       }
     }
   }

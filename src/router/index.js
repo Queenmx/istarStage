@@ -149,7 +149,6 @@ const router = new Router({
     }
 })
 import { getItem, setItem } from "../util/util";
-// setItem("userInfo",{'phone':'1232321321323'})
 router.beforeEach((to, from, next) => {
     if (to.path !== "/login" && !getItem("api_token")) {
         // this route requires auth, check if logged in

@@ -27,13 +27,17 @@
     </van-row>
     <router-link class="forget inblock" to="/forget">忘记密码</router-link>
     <div class="btnBox">
-        <van-button size="large" type="primary">登录</van-button>
+        <van-button size="large" type="primary" @click="login">登录</van-button>
         <van-button size="large" type="primary" @click="sign">注册</van-button>
     </div>
     
 </div>
 </template>
+
+
 <script>
+import { getUser,sendValidateCode } from "@/util/axios";
+import {  setItem } from "@/util/util.js";
 export default {
   data() {
     return {
@@ -53,7 +57,12 @@ export default {
     sign() {
       this.$router.push({ path: "/sign" });
     },
+    //发送验证码
     settime() {
+      if (!/^1(3|4|5|7|8)\d{9}$/.test(this.phone)) {
+        this.$toast("请输入正确的手机号码");
+        return false;
+      }
       const TIME_COUNT = 60;
       if (!this.timer) {
         this.count = TIME_COUNT;
@@ -63,6 +72,7 @@ export default {
             this.count--;
             this.msg = this.count + "s后重新发送";
             this.isDisable = true;
+            
           } else {
             this.isDisable = false;
             this.msg = "发送验证码";
@@ -70,6 +80,68 @@ export default {
             this.timer = null;
           }
         }, 1000);
+        this.sendValidateCode();
+      }
+    },
+    login(){      
+      if(this.phone){
+        if (!/^1(3|4|5|7|8)\d{9}$/.test(this.phone)) {
+          this.$toast("请输入正确的手机号码");
+          return false;
+        }        
+        if(this.active==0){//密码登录
+          if(this.psd){
+            this.loginpsd();
+          }else{
+            this.$toast("密码不能为空")
+          }                   
+        }else{//验证码登录
+          if(this.sms){
+            this.logincode();
+          }else{
+            this.$toast("验证码不能为空")
+          }          
+        }       
+      }else{
+        this.$toast("请输入手机号码");
+      }            
+    },
+    //发送验证码接口
+    async sendValidateCode(){
+      let data={
+        cusPhone:this.phone
+      }
+      let res = await sendValidateCode(data);
+      this.$toast(res.msg);
+      
+    },
+    //密码登录
+    async loginpsd(){
+      let data={
+        cusPhone:this.phone,
+        cusPassword:this.psd
+      }
+      let res = await getUser(data);
+      if(res.code==200){        
+        setItem("api_token",res.data.token);
+        setItem('userInfo',data)
+        this.$router.push({ path: "/"});
+      }else{
+        this.$toast(res.msg)
+      }
+    },
+    //验证码登录
+    async logincode(){
+      let data={
+        sms:this.sms
+      }
+      let res = await (data);
+      if(res.code==200){        
+        setItem("api_token",res.data.token);
+        setItem('userInfo',data)
+        // this.$router.push({ path: "/"});
+      }else{
+        this.$toast(res.msg)
       }
     }
   }
