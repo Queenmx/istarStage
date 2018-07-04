@@ -84,3 +84,8 @@ export const VaCodeAndPhone = params => {
     params = JSON.stringify(params);
     return fetch("base/VaCodeAndPhone", { params });
 };
+//消息列表
+export const getMessageList = params => {
+    params = JSON.stringify(params);
+    return fetch("other/getMessageList", { params });
+};
