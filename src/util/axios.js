@@ -10,7 +10,7 @@ function fetch(url, params) {
         //这里做加密
         params.params = strEnc(params.params, KEY);
         let allParams = {
-            appKey: 1,
+            appKey: "pro-1530002889-d",
             sign: "4a82b4b0724c14550edf7db91e3411e6",
             timestamp: new Date().valueOf(),
             data: params.params
