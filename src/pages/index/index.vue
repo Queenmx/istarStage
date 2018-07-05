@@ -20,17 +20,17 @@
                     <span class="money">{{money}}</span>
                     <p class="tips">借1000，每天利息低至1元，具体以显示为准</p>
                     <div class="apply">
-                        <van-button size="large" type="primary" :disabled="orderStatus!= 1" @click="apply">立即申请</van-button>
+                        <van-button size="large" type="primary" :disabled="orderStatus!= 0" @click="apply">立即申请</van-button>
                     </div>
                 </div>
                 <split></split>
-                <router-link to="/verify" v-if="orderStatus>= 3">
+                <router-link to="/verify" v-if="orderStatus == 2">
                 <van-row class="order-progress whitebg" type="flex" justify="space-between">
                     <van-col class="pro-name" span="10">
-                        <h2>{{productName}}</h2>
-                        <span>￥{{auditedAmount}}</span>
+                        <h2>{{productName?productName :'----'}}</h2>
+                        <span>{{auditedAmount | moneyFormat}}</span>
                     </van-col>
-                    <van-col class="orderstatus textright" span="10">{{unable[orderStatus]}}</van-col>
+                    <van-col class="orderstatus textright" span="10">{{flowFlag}}</van-col>
                 </van-row>
                 </router-link>
                 <split></split>
@@ -56,9 +56,8 @@
     </div>
 </template>
 <script>
-import { HomeStatus, baseInfo,isNewMsg } from "@/util/axios.js";
+import { HomeStatus, baseInfo, isNewMsg } from "@/util/axios.js";
 import { formateTime, setItem } from "@/util/util.js";
-
 
 export default {
   data() {
@@ -66,11 +65,9 @@ export default {
       money: "",
       productName: "",
       auditedAmount: "",
-      unable: {
-        3: "待签约",
-        4: "待还款"
-      },
+      unable: "",
       orderStatus: 3,
+      flowFlag: "",
       time: new Date(),
       images: [
         require("../../assets/images/t1.jpg"),
@@ -79,34 +76,34 @@ export default {
         require("../../assets/images/t4.jpg")
       ],
 
-      hasNews:false
+      hasNews: false
     };
   },
-
+  filters: {
+    moneyFormat(value) {
+      let money = 0;
+      value ? (money = value.toFixed(2)) : "";
+      return "￥" + money;
+    }
+  },
   mounted() {
     // this.formateDate();
     this.init();
-    this.isNewMsg();
+    // this.isNewMsg();
   },
   methods: {
     init() {
-      this.baseinfo();
       this.getInfo();
     },
     async getInfo() {
       let res = await HomeStatus();
       console.log(res);
       if (res.code === 200) {
+        this.orderStatus = res.data.unAble;
+        this.money = res.data.priceMax;
         this.productName = res.data.info.productName;
         this.auditedAmount = res.data.info.auditedAmount;
-        // this.orderStatus = res.data.unAble;
-      }
-    },
-    async baseinfo() {
-      let res = await baseInfo();
-      console.log(res);
-      if (res.code === 200) {
-        this.money = res.data.priceMax;
+        this.flowFlag = res.data.info.flowFlag;
       }
     },
     apply() {
@@ -122,15 +119,14 @@ export default {
     personcenter() {
       this.$router.push({ path: "/index/personcenter" });
     },
-    message(){
-       this.$router.push({ path: "/index/message" });
+    message() {
+      this.$router.push({ path: "/index/message" });
     },
-    async isNewMsg(){
-      let res=await isNewMsg();
-      if(res.code==200){
-        this.hasNews=res.data;
+    async isNewMsg() {
+      let res = await isNewMsg();
+      if (res.code == 200) {
+        this.hasNews = res.data;
       }
-
     }
   }
 };
@@ -193,14 +189,16 @@ export default {
   .arrow {
     padding-top: rem(9px);
   }
-  .msg{position: relative;}
-  .redmark{
-    width:rem(15px);
-    height:rem(15px);
-    background:#FF0000;
-    border-radius:50%;
+  .msg {
+    position: relative;
+  }
+  .redmark {
+    width: rem(15px);
+    height: rem(15px);
+    background: #ff0000;
+    border-radius: 50%;
     display: inline-block;
-    position:absolute;
+    position: absolute;
     right: rem(1px);
   }
 }

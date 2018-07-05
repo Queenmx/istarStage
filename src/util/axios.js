@@ -1,4 +1,3 @@
-
 import Vue from 'vue'
 import axios from "axios";
 import { router } from '../router'
@@ -11,7 +10,6 @@ function fetch(url, params) {
         params.params = strEnc(params.params, KEY);
         let allParams = {
             appKey: "pro-1530002889-d",
-            // appKey: "1",
             sign: "4a82b4b0724c14550edf7db91e3411e6",
             timestamp: new Date().valueOf(),
             data: params.params
