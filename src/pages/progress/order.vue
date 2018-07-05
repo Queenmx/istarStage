@@ -89,16 +89,19 @@
                 </van-collapse>
                 <split></split> 
                 <div class="complete-bill">
-                <van-cell-group>
-                    <van-cell title="账单分期" value="已还18120元，未还0元" />
-                </van-cell-group>
+                <van-row type="flex" justify="space-between wrap" class="complete-tit">
+                    <van-col span="7">账单分期</van-col>
+                    <van-col class="textright" span="17">已还{{repaidAmount}}元，未还{{noRepayAmount}}元</van-col>
+                </van-row>
                 <div class="complete-list">
                     <van-collapse v-model="activeList" accordion>
                         <van-collapse-item v-for="(item,i) in plans" :key="i" :name="i+1">
                             <div slot="title">
-                                <input v-if="item.periodStatus !== 0" type="checkbox" :value="i" :id="'plansCheckbox' + i"  name="plansCheckbox" :checked="item.periodStatus !== 0" :disabled="item.periodStatus ==2"/>
+                                <input v-if="item.periodStatus !== 0" type="checkbox" :value="i" :id="'plansCheckbox' + i"  name="plansCheckbox" :checked="item.periodStatus !== 0" :disabled="item.periodStatus !==0"/>
                                 <input v-else type="checkbox" name="plansCheckbox" class="checkItem" :id="'plansCheckbox' + i"  :value="i" v-model="selectArr"/>
-                                <label :for="'plansCheckbox' + i" class="label" :class="item.periodStatus | planStatusStyle" v-text="i + 1" @click="checked(i,$event)">
+                                <label v-if="item.periodStatus === 0" :for="'plansCheckbox' + i" class="label" :class="item.periodStatus | planStatusStyle" v-text="i + 1" @click="checked(i,$event)">
+                                </label>
+                                <label v-else :for="'plansCheckbox' + i" class="label" :class="item.periodStatus | planStatusStyle" v-text="i + 1">
                                 </label>
                                 <span :class="item.periodStatus | planStatusStyle">{{ item.periodAmount | formatMoney('元') }}</span>
                                 <span class="complete-money inblock">{{item.repayTime}} {{item.periodStatus|planStatus}}</span>
@@ -141,9 +144,16 @@
             </div>
         </div>
         <div class="footer" v-if="status[flowFlag] == 12">
-            <input type="checkbox" name="checkboxAll" id="checkboxAll" value="all" />
-            <label for="checkboxAll" class="label" @click="checkboxAll($event)"></label>
-            <span>已选{{ plansTotal | formatMoney('元') }}</span>
+            <van-row type="flex" justify="space-between">
+                <van-col span="14">
+                    <input type="checkbox" name="checkboxAll" id="checkboxAll" value="all" />
+                    <label for="checkboxAll" class="label" @click="checkboxAll($event)"></label>
+                    <span>已选<span class="failed">{{ plansTotal | formatMoney('元') }}</span></span>
+                </van-col>
+                <van-col span="10" class="payment-atonce">
+                    <button>立即还款</button>
+                </van-col>
+            </van-row>
         </div>
     </div>    
 </template>
@@ -184,6 +194,8 @@ export default {
       bankNumber: "110",
       productRate: 11,
       flowFlag: "待还款",
+      repaidAmount: "6646.0",
+      noRepayAmount: "40000.0",
       title: {
         applyPrice: "申请金额",
         applyTerm: "申请期限",
@@ -326,7 +338,7 @@ export default {
   filters: {
     planStatus: function(status) {
       //返回当前还款状态
-      return status === 0 ? "未还" : status === 1 ? "处理中" : "已还款";
+      return status === 0 ? "未还" : status === 1 ? "进行中" : "已还款";
     },
     planStatusStyle: function(status) {
       //返回当前还款状态样式
@@ -334,18 +346,21 @@ export default {
     },
     formatMoney: function(value, fmt) {
       return "￥" + value.toFixed(2) + fmt;
-    },
-    planStatistics: function(periodStatus, data) {
-      //统计已还与未还款数
-      let total = 0;
-      for (let i = 0; i < data.length; i++) {
-        periodStatus === 0
-          ? data[i].periodStatus === 2 ? (total += data[i].periodAmount) : 0
-          : data[i].periodStatus !== 2 ? (total += data[i].periodAmount) : 0;
-      }
-
-      return total;
     }
+    // planStatistics: function(periodStatus, data) {
+    //   //统计已还与未还款数
+    //   let total = 0;
+    //   for (let i = 0; i < data.length; i++) {
+    //     periodStatus === 0
+    //       ? data[i].periodStatus === 2 ? (total += data[i].periodAmount) : 0
+    //       : data[i].periodStatus !== 2 ? (total += data[i].periodAmount) : 0;
+    //   }
+
+    //   return total;
+    // }
+  },
+  mounted: function() {
+    this.getInitIndex();
   },
   methods: {
     activeValue(flag) {
@@ -367,27 +382,41 @@ export default {
     onClickBigBtn() {
       this.$toast("点击按钮");
     },
-    checked(index, e) {
+    checked(maxIndex, e) {
       //选中操作
-      e && !e.target.control.checked ? (index = index) : (index = index - 1);
-      this.select(index);
-      this.checkboxAllStatus();
+      let minIndex = this.getMinIndex();
+      let checkbox = document.getElementById("checkboxAll");
+      this.select(minIndex, maxIndex, e);
+      if (e.target.control.className == "checkItem") {
+        if (e.target.control.checked) maxIndex -= 1;
+        maxIndex == this.plans.length - 1
+          ? (checkbox.checked = true)
+          : (checkbox.checked = false);
+      }
     },
-    select(index) {
+    select(minIndex, maxIndex, e) {
       //记录选择记录
       this.selectArr = [];
-      let result = this.plans.filter(function(item) {
-        return item.periodStatus === 2;
-      });
-      for (var i = result.length; i <= index; i++) {
+      for (let i = minIndex; i <= maxIndex; i++) {
         this.selectArr.push(i);
       }
     },
     checkboxAll(e) {
       //全选
       !e.target.control.checked
-        ? this.select(this.plans.length - 1)
-        : (this.selectArr = []);
+        ? this.checked(this.plans.length - 1, e)
+        : this.getInitIndex();
+    },
+    getMinIndex() {
+      for (let i in this.plans) {
+        if (this.plans[i].periodStatus === 1) return parseInt(i);
+      }
+    },
+    getInitIndex() {
+      this.selectArr = [];
+      for (let i in this.plans) {
+        if (this.plans[i].periodStatus === 1) this.selectArr.push(parseInt(i));
+      }
     },
     checkboxAllStatus(index) {
       //全选按钮状态
@@ -475,6 +504,10 @@ export default {
   .complete-money {
     float: right;
   }
+  .complete-tit {
+    background: #fff;
+    line-height: rem(120px);
+  }
   .complete-detail {
     line-height: rem(80px);
   }
@@ -505,7 +538,7 @@ export default {
   }
 
   input[type="checkbox"] {
-    // display: none;
+    display: none;
   }
   input[type="checkbox"]:checked + .label {
     background-color: #00cf7a;
@@ -533,6 +566,21 @@ export default {
   }
   span.success {
     color: #686868;
+  }
+  .footer {
+    // height: rem(100px);
+    font-size: rem(30px);
+    line-height: rem(100px);
+    background: #fff;
+    padding-left: rem(30px);
+    .payment-atonce {
+      button {
+        background-color: $blue;
+        width: 100%;
+        border: none;
+        color: #fff;
+      }
+    }
   }
 }
 </style>

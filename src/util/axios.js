@@ -1,10 +1,10 @@
 
 import Vue from 'vue'
 import axios from "axios";
+import Router from 'vue-router'
 import Qs from "qs";
 import { baseUrl, KEY } from "../config";
 import { strEnc, strDec } from "./aes.js";
-
 function fetch(url, params) {
     return new Promise((resolve, reject) => {
         //这里做加密
@@ -22,18 +22,18 @@ function fetch(url, params) {
                     ACCESS_TOKEN: localStorage.getItem("api_token")
                 }
             })
-            .then(function (response) {
-                if (response.data.code == 200) {    
-                    if(response.data.data){
+            .then((response) => {
+                if (response.data.code == 200) {
+                    if (response.data.data) {
                         response.data.data = JSON.parse(strDec(response.data.data, KEY));
-                    }                                  
+                    }
                     console.log(response.data.data);
                 } else if (response.data.code == 403) {
-                    this.$router.push({ path: '/login' })
+                    Vue.$router.push({ path: '/login' })
                 }
                 resolve(response.data);
             })
-            .catch(function (error) {
+            .catch((error) => {
                 reject(error);
             });
     });
@@ -63,6 +63,21 @@ export const sendValidateCode = params => {
     params = JSON.stringify(params);
     return fetch("base/sendValidateCode", { params });
 };
+// 首页
+export const HomeStatus = params => {
+    params = JSON.stringify(params);
+    return fetch('repayment/home', { params })
+}
+// 用户过滤
+export const filterUser = params => {
+    params = JSON.stringify(params);
+    return fetch("proInfo/filter", { params });
+}
+// 基本信息查询
+export const baseInfo = params => {
+    params = JSON.stringify(params);
+    return fetch("proInfo/base", { params });
+}
 //注册
 export const registerByCusPhone = params => {
     params = JSON.stringify(params);
@@ -100,3 +115,4 @@ export const updateIsRead = params => {
     params = JSON.stringify(params);
     return fetch("other/updateIsRead", { params });
 };
+

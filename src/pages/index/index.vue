@@ -56,8 +56,9 @@
     </div>
 </template>
 <script>
+import { HomeStatus, baseInfo,isNewMsg } from "@/util/axios.js";
 import { formateTime, setItem } from "@/util/util.js";
-import { isNewMsg } from "@/util/axios";
+
 
 export default {
   data() {
@@ -72,14 +73,36 @@ export default {
         require("../../assets/images/t3.jpg"),
         require("../../assets/images/t4.jpg")
       ],
+
       hasNews:false
     };
   },
+
   mounted() {
-    this.formateDate();
+    // this.formateDate();
+    this.init();
     this.isNewMsg();
   },
   methods: {
+    init() {
+      this.baseinfo();
+      this.getInfo();
+    },
+    async getInfo() {
+      let res = await HomeStatus();
+      if (res.code === "200") {
+        this.orderStatus =
+          res.data.unAble == 3
+            ? "待签约"
+            : res.data.unAble == 4 ? "待还款" : "";
+      }
+    },
+    async baseinfo() {
+      let res = await baseInfo();
+      if (res.code === "200") {
+        this.money = res.data.priceMax;
+      }
+    },
     apply() {
       this.$router.push({ path: "/index/product" });
     },
@@ -90,7 +113,7 @@ export default {
       this.$router.push({ path: "/progress" });
     },
     //去往个人中心
-    personcenter(){
+    personcenter() {
       this.$router.push({ path: "/index/personcenter" });
     },
     message(){
@@ -101,6 +124,7 @@ export default {
       if(res.code==200){
         this.hasNews=res.data;
       }
+
     }
   }
 };
