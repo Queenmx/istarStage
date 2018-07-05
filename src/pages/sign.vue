@@ -1,16 +1,23 @@
 <template>
-    <div class="sign wrap">
-        <div class="logo">LOGO</div>
-        <div class="sign-input">
+    <div class="sign">
+        <div class="logo">
+          <span class="headicon">LOGO</span>
+        </div>
+        <div class="main">
+          <div class="sign-input">
             <van-cell-group>
-                <van-field placeholder="请输入手机号码" left-icon="contact" v-model="phone" />
+                <i class="psdicon peo"></i>
+                <van-field placeholder="请输入手机号码" v-model="phone" />
             </van-cell-group>
             <van-cell-group>
+                <i class="psdicon safe"></i>
                 <van-field v-model="sms" center clearable placeholder="请输入短信验证码">
                 <van-button slot="button" size="small" type="primary" @click="settime()" class="settime" :disabled="isDisable">{{msg}}</van-button>
             </van-field>
             </van-cell-group>
         </div>
+        </div>
+        
         <div class="btnBox">
             <van-button size="large" type="primary" @click="register">注册</van-button>
             <van-button size="large" type="primary" @click="toLogin">已有账号，去登录</van-button>
@@ -103,17 +110,28 @@ export default {
 @import "../assets/style/common.scss";
 @import "../assets/style/style.scss";
 .logo {
-  width: rem(300px);
-  height: rem(300px);
-  line-height: rem(300px);
+  
+  height: rem(533px);
+  overflow: hidden;
   margin: 0 auto;
   text-align: center;
   font-size: rem(36px);
+  background-image: url("../assets/images/login-bg.png");
+  background-size:100%;
+  .headicon{
+    display:block;
+    width:rem(160px);
+    height:rem(160px);
+    line-height:rem(160px);
+    border-radius:50%;
+    background: #fff;
+    margin:rem(104px) auto;
+  }
 }
-.sign-input {
-  width: rem(550px);
-}
+
 .sign {
+  position: relative;
+  .btnBox{margin-top:rem(500px);}  
   .van-tabs__nav--card .van-tab.van-tab--active {
     background: $blue;
     color: #fff;
@@ -136,6 +154,25 @@ export default {
     background: #fff;
     @include box-shadow(0 12px 15px rgba(0, 0, 0, 0.1));
     border-radius: rem(10px);
+    .psdicon{
+      @include icon(41px,49px);     
+      position: absolute;
+      top:30%;
+      left:rem(30px);
+      z-index: 1;
+    }
+    .peo{
+      background-image: url("../assets/images/peo.png");
+    }
+    .safe{ 
+      top:33%;    
+      background-image: url("../assets/images/safe.png");      
+    }
+  }
+  .main{
+    position: absolute;
+    top:rem(405px);
+    width:100%;
   }
   .van-tabs__nav--card {
     margin: 0;
@@ -145,7 +182,12 @@ export default {
     margin: rem(20px) auto;
   }
   .van-cell {
-    padding: 20px 15px;
+    padding: 20px 20px 20px 45px;
+  }
+  .settime{background:#fff;
+    color:#4c9dec;
+    border-radius:rem(45px);
+    padding:0 rem(30px);
   }
 }
 </style>

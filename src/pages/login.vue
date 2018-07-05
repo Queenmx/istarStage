@@ -1,22 +1,28 @@
 <template>
-<div class="login wrap">
-    <div class="logo">LOGO</div>
-    <van-row type="flex" justify="center">
+<div class="login">
+    <div class="logo">
+      <span class="headicon">LOGO</span>
+    </div>
+    <van-row type="flex" justify="center" class="main">
         <van-col span="24">
             <van-tabs class="loginTabs" v-model="active" type="card" swipeable>
                 <van-tab title="账号登录">
                     <van-cell-group>
-                        <van-field placeholder="请输入手机号码" left-icon="contact" v-model="phone" />
+                        <i class="psdicon peo"></i>
+                        <van-field placeholder="请输入手机号码" v-model="phone" />
                     </van-cell-group>
                     <van-cell-group>
-                        <van-field  :type="isSee?'text':'password'" placeholder="请输入密码" :left-icon="isSee?'password-view':'password-not-view'" v-model="psd" @click="isSee=!isSee"/>
+                        <i class="psdicon lock"></i>
+                        <van-field  type="password" placeholder="请输入密码" v-model="psd" />                                                 
                     </van-cell-group>
                 </van-tab>
                 <van-tab title="验证码登录">
                     <van-cell-group>
-                        <van-field placeholder="请输入手机号码" left-icon="contact" v-model="phone" />
+                        <i class="psdicon peo"></i>
+                        <van-field placeholder="请输入手机号码" v-model="phone" />
                     </van-cell-group>
                     <van-cell-group>
+                        <i class="psdicon safe"></i>
                         <van-field v-model="sms" center clearable placeholder="请输入短信验证码">
                             <van-button slot="button" size="small" type="primary" @click="settime()" class="settime" :disabled="isDisable">{{msg}}</van-button>
                         </van-field>
@@ -51,7 +57,7 @@ export default {
       timer: null,
       msg: "发送验证码",
       isDisable: false,
-      isSee:false
+      
     };
   },
   methods: {
@@ -126,7 +132,11 @@ export default {
       if(res.code==200){        
         setItem("api_token",res.data.token);
         setItem('userInfo',data)
-        this.$router.push({ path: "/"});
+        if(res.data.isRealName){
+          this.$router.push({ path: "/"});         
+        }else{
+          this.$router.push({ path: "/certification"}); 
+        }
       }else{
         this.$toast(res.msg)
       }
@@ -141,7 +151,12 @@ export default {
       if(res.code==200){        
         setItem("api_token",res.data.token);
         setItem('userInfo',data);
-        this.$router.push({ path: "/"});
+        if(res.data.isRealName){
+          this.$router.push({ path: "/"});          
+        }else{
+          this.$router.push({ path: "/certification"}); 
+        }
+        
       }else{
         this.$toast(res.msg);
       }
@@ -152,60 +167,102 @@ export default {
 <style lang="scss">
 @import "../assets/style/common.scss";
 @import "../assets/style/style.scss";
-.logo {
-  width: rem(300px);
-  height: rem(300px);
-  line-height: rem(300px);
-  margin: 0 auto;
+.logo {  
+  height: rem(533px);  
   text-align: center;
   font-size: rem(36px);
-  // @include icon(66px, 69px);
-  //   background-image: url("../../assets/images/icon-book.png");
+  overflow: hidden;
+  background-image: url("../assets/images/login-bg.png");
+  background-size:100%;
+  .headicon{
+    display:block;
+    width:rem(160px);
+    height:rem(160px);
+    line-height:rem(160px);
+    border-radius:50%;
+    background: #fff;
+    margin:rem(104px) auto;
+  }
 }
 .forget {
   width: rem(640px);
   text-align: right;
   color: $blue;
   font-size: rem(30px);
+  margin-top:rem(330px);
 }
 .login {
-  .van-tabs__nav--card .van-tab.van-tab--active {
-    background: $blue;
+  position: relative;
+  .van-tabs__nav--card .van-tab.van-tab--active,.van-tabs__nav{
+    background:rgba(248,248,248,.2);
     color: #fff;
   }
   .van-tabs__nav--card .van-tab {
-    border-right: 1px solid $blue;
+    border-right: none;
     color: $blue;
-    line-height: rem(70px);
+    line-height: rem(100px);
   }
   .van-tabs__nav--card {
-    border: 1px solid $blue;
+    border:none;
   }
   .van-tabs--card .van-tabs__wrap,
   .van-tabs__nav--card {
-    height: rem(70px);
+    height: rem(100px);
   }
   .loginTabs {
     width: rem(640px);
     margin: 0 auto;
-    background: #fff;
+    // background: #fff;
     // border:1px solid $blue;
     @include box-shadow(0 12px 15px rgba(0, 0, 0, 0.1));
     border-radius: rem(10px);
+    .van-cell-group{
+      position: relative;
+    }
+    .psdicon{
+      @include icon(41px,49px);     
+      position: absolute;
+      top:30%;
+    }
+    .peo{
+       background-image: url("../assets/images/peo.png");
+    }
+    .lock{
+       background-image: url("../assets/images/lock.png");
+    }
+    .safe{
+     
+       background-image: url("../assets/images/safe.png");
+      
+    }
+    
   }
   .van-tabs__nav--card {
     margin: 0;
   }
   .van-tabs__content {
-    width: rem(550px);
-    margin: rem(20px) auto;
+    width: rem(555px);
+    margin: rem(40px) auto;
   }
   .van-cell {
-    padding: rem(30px) rem(15px);
+    padding: rem(40px) rem(40px);
+    background-color:transparent;
   }
   //   .van-hairline--top-bottom::after {
   //     border-width: 0;
   //   }
+  .van-row{
+    position: absolute;
+    top:rem(434px);
+    width: 100%;
+  }
+  .van-field .van-cell__value{left:rem(30px);}
+  .settime{background:#fff;
+    color:#4c9dec;
+    border-radius:rem(45px);
+    padding:0 rem(25px);
+  }
+  
 }
 </style>
 
