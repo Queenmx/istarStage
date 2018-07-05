@@ -53,7 +53,7 @@
     </div>
 </template>
 <script>
-import { HomeInfo } from "@/util/axios.js";
+import { HomeStatus, baseInfo } from "@/util/axios.js";
 import { formateTime, setItem } from "@/util/util.js";
 export default {
   data() {
@@ -68,21 +68,31 @@ export default {
         require("../../assets/images/t3.jpg"),
         require("../../assets/images/t4.jpg")
       ],
-      count:''
+      count: ""
     };
   },
   mounted() {
     // this.formateDate();
-    // this.init();
+    this.init();
   },
   methods: {
-    init() {},
+    init() {
+      this.baseinfo();
+      this.getInfo();
+    },
     async getInfo() {
-      let res = await HomeInfo();
+      let res = await HomeStatus();
       if (res.code === "200") {
-        this.images = res.data.bannerList.map(item => {
-          return {};
-        });
+        this.orderStatus =
+          res.data.unAble == 3
+            ? "待签约"
+            : res.data.unAble == 4 ? "待还款" : "";
+      }
+    },
+    async baseinfo() {
+      let res = await baseInfo();
+      if (res.code === "200") {
+        this.money = res.data.priceMax;
       }
     },
     apply() {
@@ -98,8 +108,8 @@ export default {
     personcenter() {
       this.$router.push({ path: "/index/personcenter" });
     },
-    message(){
-       this.$router.push({ path: "/index/message" });
+    message() {
+      this.$router.push({ path: "/index/message" });
     }
   }
 };
