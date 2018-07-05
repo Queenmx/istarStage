@@ -97,7 +97,7 @@
                         <van-collapse-item v-for="(item,i) in plans" :key="i" :name="i+1">
                             <div slot="title">
                                 <input v-if="item.periodStatus !== 0" type="checkbox" :value="i" :id="'plansCheckbox' + i"  name="plansCheckbox" :checked="item.periodStatus !== 0" :disabled="item.periodStatus ==2"/>
-                                <input v-else type="checkbox" name="plansCheckbox" class="checkItem" :id="'plansCheckbox' + i"  :value="i" v-model="selectArr"/>
+                                <input v-else type="checkbox" name="plansCheckbox" class="checkItem" :id="'plansCheckbox' + i" v-model="selectArr[i]"/>
                                 <label :for="'plansCheckbox' + i" class="label" :class="item.periodStatus | planStatusStyle" v-text="i + 1" @click="checked(i,$event)">
                                 </label>
                                 <span :class="item.periodStatus | planStatusStyle">{{ item.periodAmount | formatMoney('元') }}</span>
@@ -142,7 +142,7 @@
         </div>
         <div class="footer" v-if="status[flowFlag] == 12">
             <input type="checkbox" name="checkboxAll" id="checkboxAll" value="all" />
-            <label for="checkboxAll" class="label" @click="checkboxAll($event)"></label>
+            <label for="checkboxAll" class="label" @click="checkboxAll($event)" ></label>
             <span>已选{{ plansTotal | formatMoney('元') }}</span>
         </div>
     </div>    
@@ -318,8 +318,20 @@ export default {
     plansTotal() {
       let total = 0;
       for (let i = 0; i < this.selectArr.length; i++) {
-        total += this.plans[this.selectArr[i]].periodAmount;
+        if (this.selectArr[i]) {
+          total += this.plans[i].periodAmount;
+          for (let y = 0; y < i; y++) {
+            if (this.plans[y].periodStatus != 2) {
+              this.$set(this.selectArr, y, true);
+            }
+          }
+        }
       }
+      this.plans.forEach(item => {
+        if (item.periodStatus == 1) {
+          total += item.periodAmount;
+        }
+      });
       return total;
     }
   },
