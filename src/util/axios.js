@@ -22,10 +22,10 @@ function fetch(url, params) {
                 }
             })
             .then(function (response) {
-                if (response.data.code == 200) {    
-                    if(response.data.data){
+                if (response.data.code == 200) {
+                    if (response.data.data) {
                         response.data.data = JSON.parse(strDec(response.data.data, KEY));
-                    }                                  
+                    }
                     console.log(response.data.data);
                 } else if (response.data.code == 403) {
                     this.$router.push({ path: '/login' })
@@ -57,3 +57,13 @@ export const sendValidateCode = params => {
     params = JSON.stringify(params);
     return fetch("base/sendValidateCode", { params });
 };
+// 首页
+export const HomeInfo = params => {
+    params = JSON.stringify(params);
+    return fetch('repayment/home', { params })
+}
+// 用户过滤
+export const filterUser = params => {
+    params = JSON.stringify(params);
+    return fetch("", { params });
+}

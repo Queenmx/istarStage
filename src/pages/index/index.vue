@@ -53,6 +53,7 @@
     </div>
 </template>
 <script>
+import { HomeInfo } from "@/util/axios.js";
 import { formateTime, setItem } from "@/util/util.js";
 export default {
   data() {
@@ -70,9 +71,19 @@ export default {
     };
   },
   mounted() {
-    this.formateDate();
+    // this.formateDate();
+    // this.init();
   },
   methods: {
+    init() {},
+    async getInfo() {
+      let res = await HomeInfo();
+      if (res.code === "200") {
+        this.images = res.data.bannerList.map(item => {
+          return {};
+        });
+      }
+    },
     apply() {
       this.$router.push({ path: "/index/product" });
     },
@@ -83,7 +94,7 @@ export default {
       this.$router.push({ path: "/progress" });
     },
     //去往个人中心
-    personcenter(){
+    personcenter() {
       this.$router.push({ path: "/index/personcenter" });
     }
   }
