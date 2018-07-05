@@ -61,6 +61,8 @@ export default {
             that.$router.push({ path: "/index/personcenter"});
           },2000)
           
+        }else{
+          this.$toast(res.msg);
         }
         
       }

@@ -2,7 +2,7 @@
     <div class="index">
         <v-header>
             <i slot="left"><van-icon name="contact" @click='personcenter'/></i>
-            <i slot="right"><van-icon name="chat" /></i>
+            <i slot="right"><van-icon name="chat" @click="message"/></i>
         </v-header>
         <div class="container">
             <van-swipe :autoplay="3000">
@@ -67,7 +67,8 @@ export default {
         require("../../assets/images/t2.jpg"),
         require("../../assets/images/t3.jpg"),
         require("../../assets/images/t4.jpg")
-      ]
+      ],
+      count:''
     };
   },
   mounted() {
@@ -96,6 +97,9 @@ export default {
     //去往个人中心
     personcenter() {
       this.$router.push({ path: "/index/personcenter" });
+    },
+    message(){
+       this.$router.push({ path: "/index/message" });
     }
   }
 };

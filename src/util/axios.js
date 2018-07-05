@@ -11,6 +11,7 @@ function fetch(url, params) {
         params.params = strEnc(params.params, KEY);
         let allParams = {
             appKey: "pro-1530002889-d",
+            // appKey: "1",
             sign: "4a82b4b0724c14550edf7db91e3411e6",
             timestamp: new Date().valueOf(),
             data: params.params
@@ -37,10 +38,15 @@ function fetch(url, params) {
             });
     });
 }
-//用户登录接口
+//账号登录
 export const getUser = params => {
     params = JSON.stringify(params);
     return fetch("base/pwdLogin", { params });
+};
+//验证码登录
+export const loginByCode = params => {
+    params = JSON.stringify(params);
+    return fetch("base/loginByCode", { params });
 };
 // 设置新密码
 export const updatePwd = params => {
@@ -67,3 +73,29 @@ export const filterUser = params => {
     params = JSON.stringify(params);
     return fetch("", { params });
 }
+//注册
+export const registerByCusPhone = params => {
+    params = JSON.stringify(params);
+    return fetch("base/registerByCusPhone", { params });
+};
+//设置密码
+export const setPassword = params => {
+    params = JSON.stringify(params);
+    return fetch("base/setPassword", { params });
+};
+//实名认证
+export const realNameAuth = params => {
+    params = JSON.stringify(params);
+    return fetch("base/realNameAuth", { params });
+};
+
+//忘记密码
+export const VaCodeAndPhone = params => {
+    params = JSON.stringify(params);
+    return fetch("base/VaCodeAndPhone", { params });
+};
+//消息列表
+export const getMessageList = params => {
+    params = JSON.stringify(params);
+    return fetch("other/getMessageList", { params });
+};
