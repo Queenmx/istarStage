@@ -17,21 +17,21 @@
                     <span class="money">{{money}}</span>
                     <p class="tips">借1000，每天利息低至1元，具体以显示为准</p>
                     <div class="apply">
-                        <van-button size="large" type="primary" @click="apply">立即申请</van-button>
+                        <van-button size="large" type="primary" :disabled="orderStatus!= 1" @click="apply">立即申请</van-button>
                     </div>
                 </div>
                 <split></split>
-                <router-link to="/verify">
+                <router-link to="/verify" v-if="orderStatus>= 3">
                 <van-row class="order-progress whitebg" type="flex" justify="space-between">
                     <van-col class="pro-name" span="10">
-                        <h2>星分期</h2>
-                        <span>￥{{loanamount}}</span>
+                        <h2>{{productName}}</h2>
+                        <span>￥{{auditedAmount}}</span>
                     </van-col>
-                    <van-col class="orderstatus textright" span="10">{{orderStatus}}</van-col>
+                    <van-col class="orderstatus textright" span="10">{{unable[orderStatus]}}</van-col>
                 </van-row>
                 </router-link>
                 <split></split>
-                <router-link to="/progress/order">
+                <router-link to="/progress/order" v-if="orderStatus== 4">
                 <van-row class="order-progress whitebg" type="flex" justify="space-between" @click="toDetail">
                     <van-col class="pro-name" span="18">
                         <h2>还款计划</h2>
@@ -58,9 +58,14 @@ import { formateTime, setItem } from "@/util/util.js";
 export default {
   data() {
     return {
-      money: "20000",
-      loanamount: "20000.00",
-      orderStatus: "待签约",
+      money: "",
+      productName: "",
+      auditedAmount: "",
+      unable: {
+        3: "待签约",
+        4: "待还款"
+      },
+      orderStatus: 3,
       time: new Date(),
       images: [
         require("../../assets/images/t1.jpg"),
@@ -82,16 +87,17 @@ export default {
     },
     async getInfo() {
       let res = await HomeStatus();
-      if (res.code === "200") {
-        this.orderStatus =
-          res.data.unAble == 3
-            ? "待签约"
-            : res.data.unAble == 4 ? "待还款" : "";
+      console.log(res);
+      if (res.code === 200) {
+        this.productName = res.data.info.productName;
+        this.auditedAmount = res.data.info.auditedAmount;
+        // this.orderStatus = res.data.unAble;
       }
     },
     async baseinfo() {
       let res = await baseInfo();
-      if (res.code === "200") {
+      console.log(res);
+      if (res.code === 200) {
         this.money = res.data.priceMax;
       }
     },
@@ -151,6 +157,10 @@ export default {
   }
   .apply {
     margin-top: rem(40px);
+    button:disabled {
+      background-color: $lightGrey;
+      border-color: $lightGrey;
+    }
   }
   .order-progress {
     font-size: rem(30px);

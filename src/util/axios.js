@@ -1,7 +1,7 @@
 
 import Vue from 'vue'
 import axios from "axios";
-import Router from 'vue-router'
+import { router } from '../router'
 import Qs from "qs";
 import { baseUrl, KEY } from "../config";
 import { strEnc, strDec } from "./aes.js";
@@ -19,7 +19,8 @@ function fetch(url, params) {
         axios
             .post(baseUrl + url, allParams, {
                 headers: {
-                    ACCESS_TOKEN: localStorage.getItem("api_token")
+                    // ACCESS_TOKEN: localStorage.getItem("api_token"),
+                    TOKEN: localStorage.getItem("api_token")
                 }
             })
             .then((response) => {
@@ -27,9 +28,8 @@ function fetch(url, params) {
                     if (response.data.data) {
                         response.data.data = JSON.parse(strDec(response.data.data, KEY));
                     }
-                    console.log(response.data.data);
                 } else if (response.data.code == 403) {
-                    Vue.$router.push({ path: '/login' })
+                    router.push({ path: '/login' })
                 }
                 resolve(response.data);
             })
