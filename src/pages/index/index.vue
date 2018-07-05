@@ -2,7 +2,10 @@
     <div class="index">
         <v-header>
             <i slot="left"><van-icon name="contact" @click='personcenter'/></i>
-            <i slot="right"><van-icon name="chat" @click="message"/></i>
+            <i slot="right" class="msg">
+              <van-icon name="chat" @click="message"/>
+              <span class="redmark" v-if="hasNews"></span>
+            </i>
         </v-header>
         <div class="container">
             <van-swipe :autoplay="3000">
@@ -54,6 +57,8 @@
 </template>
 <script>
 import { formateTime, setItem } from "@/util/util.js";
+import { isNewMsg } from "@/util/axios";
+
 export default {
   data() {
     return {
@@ -67,11 +72,12 @@ export default {
         require("../../assets/images/t3.jpg"),
         require("../../assets/images/t4.jpg")
       ],
-      count:''
+      hasNews:false
     };
   },
   mounted() {
     this.formateDate();
+    this.isNewMsg();
   },
   methods: {
     apply() {
@@ -89,6 +95,12 @@ export default {
     },
     message(){
        this.$router.push({ path: "/index/message" });
+    },
+    async isNewMsg(){
+      let res=await isNewMsg();
+      if(res.code==200){
+        this.hasNews=res.data;
+      }
     }
   }
 };
@@ -146,6 +158,16 @@ export default {
   }
   .arrow {
     padding-top: rem(9px);
+  }
+  .msg{position: relative;}
+  .redmark{
+    width:rem(15px);
+    height:rem(15px);
+    background:#FF0000;
+    border-radius:50%;
+    display: inline-block;
+    position:absolute;
+    right: rem(1px);
   }
 }
 </style>

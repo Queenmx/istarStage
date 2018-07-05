@@ -2,14 +2,27 @@
   <div class="message">
       <v-header title="系统消息"></v-header>
       <van-pull-refresh v-model="loading" @refresh="onRefresh" :loading-text="loadtext">
-            <div v-for="item in list" :key="item.noticeId" class="messageli">
+            <!-- <div v-for="item in list" :key="item.noticeId" class="messageli">
           
                 <div class="item-wrap" :class="item.isRead==0?'notread':''">
-                    <p class="time">{{item.createTime}}</p>
+                    <p class="time">{{item.createTimeStr}}</p>
                     <p class="title">{{item.noticeContent}}</p>            
                     <p class="content">客服电话：4000-665-665</p>            
                 </div>
-            </div>
+            </div> -->
+            <van-cell-group>
+              <van-cell v-for="item in list" :key="item.noticeId" 
+                        class="messageli item-wrap" :class="item.isRead==0?'notread':''" 
+                        :title='item.title' :clickable='clickable' 
+                        @click="markedAsRead(item.noticeId);item.isRead=1"
+                       
+
+              >
+                <p class="time">{{item.createTimeStr}}</p>
+                <p class="title">{{item.noticeContent}}</p>            
+                <p class="content">客服电话：4000-665-665</p>
+              </van-cell>
+            </van-cell-group>
       </van-pull-refresh>
     
     <div v-if="!list.length" class="none">暂无记录</div>
@@ -23,7 +36,7 @@
   </div>
 </template>
 <script>
-import { getMessageList } from "@/util/axios";
+import { getMessageList,updateIsRead } from "@/util/axios";
 import { getItem } from "@/util/util";
 export default {
   data() {
@@ -35,17 +48,21 @@ export default {
       counter: 1, //当前页
       listdata: [], // 下拉更新数据存放数组
       pageEnd: 0, // 结束页数
+      clickable:true
     };
   },
   mounted() {
     this.getMessageList(1);
-    // this.markedAsRead();
+    
   },
   methods: {
-    // markedAsRead() {
-    //   let data = { supervisorNum: this.userInfo.supervisorNum };
-    //   markedAsRead(data);
-    // },
+    async markedAsRead(temp) {
+      let data={noticeId:temp};
+      let res = await updateIsRead(data);
+      if(res.code==200){
+        
+      }
+    },
     async getMessageList(num) {
       let data = {
         pageNum:num,
