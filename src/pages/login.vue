@@ -159,6 +159,8 @@ export default {
   margin: 0 auto;
   text-align: center;
   font-size: rem(36px);
+  // @include icon(66px, 69px);
+  //   background-image: url("../../assets/images/icon-book.png");
 }
 .forget {
   width: rem(640px);

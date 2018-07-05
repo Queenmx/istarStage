@@ -14,8 +14,11 @@
                   <span class="rest title black">{{item.title}}</span>
                   <i class="icon-right"></i>     
               </router-link>
-          </section>
-          
+              <!-- <div class="wrap flex item" >
+                  <span class="rest title black">当前版本</span>
+                  <span class="">v1.0</span>     
+              </div> -->
+          </section>          
         </div>
         <p class="telphone">客服电话：400-066-5655</p>
     </div>
@@ -32,7 +35,7 @@ export default {
         // { title: "分享好友", url: "" },
         { title: "意见反馈", url: "/index/opinion" },
         { title: "关于我们", url: "/index/aboutus" },
-        { title: "当前版本", url: "" },
+        // { title: "当前版本", url: "" },
         
       ],
     };

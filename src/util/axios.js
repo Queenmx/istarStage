@@ -104,3 +104,15 @@ export const getMessageList = params => {
     params = JSON.stringify(params);
     return fetch("other/getMessageList", { params });
 };
+//是否有新消息
+export const isNewMsg = params => {
+    params = JSON.stringify(params);
+    return fetch("other/isNewMsg", { params });
+};
+
+//消息标记为已读
+export const updateIsRead = params => {
+    params = JSON.stringify(params);
+    return fetch("other/updateIsRead", { params });
+};
+
