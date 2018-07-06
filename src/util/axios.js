@@ -114,6 +114,16 @@ export const updateIsRead = params => {
     params = JSON.stringify(params);
     return fetch("other/updateIsRead", { params });
 };
+// 借款记录
+export const loanRecord = params => {
+    params = JSON.stringify(params);
+    return fetch("/repayment/loan", { params });
+}
+// 订单详情
+export const repaymentDetail = params => {
+    params = JSON.stringify(params);
+    return fetch("/repayment/repaymentDetail", { params });
+}
 //资料列表是否认证
 export const datum = params => {
     params = JSON.stringify(params);
