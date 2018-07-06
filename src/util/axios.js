@@ -119,3 +119,32 @@ export const datum = params => {
     params = JSON.stringify(params);
     return fetch("proInfo/datum", { params });
 };
+//申请信息认证-返回条件
+export const returnOption = params => {
+    params = JSON.stringify(params);
+    return fetch("basicInfo/returnOption", { params });
+};
+
+//申请信息认证-查询用户填写信息
+export const getByCusId = params => {
+    params = JSON.stringify(params);
+    return fetch("basicInfo/getByCusId", { params });
+};
+
+//申请信息认证-提交填写信息
+export const ApplicationInfo = params => {
+    params = JSON.stringify(params);
+    return fetch("basicInfo/ApplicationInfo", { params });
+};
+
+//申请信息认证-人际关系
+export const relationship = params => {
+    params = JSON.stringify(params);
+    return fetch("contanctInfo/saveContact", { params });
+};
+
+//申请信息认证-人际关系信息获取
+export const getrelation = params => {
+    params = JSON.stringify(params);
+    return fetch("contanctInfo/getByCusId", { params });
+};

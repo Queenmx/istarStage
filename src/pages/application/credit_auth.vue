@@ -137,5 +137,8 @@ export default {
       }
     }
   }
+  .van-button--primary{
+    border:none;
+  }
 }
 </style>
