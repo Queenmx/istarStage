@@ -1,7 +1,6 @@
-
 import Vue from 'vue'
 import axios from "axios";
-import Router from 'vue-router'
+import { router } from '../router'
 import Qs from "qs";
 import { baseUrl, KEY } from "../config";
 import { strEnc, strDec } from "./aes.js";
@@ -11,7 +10,6 @@ function fetch(url, params) {
         params.params = strEnc(params.params, KEY);
         let allParams = {
             appKey: "pro-1530002889-d",
-            // appKey: "1",
             sign: "4a82b4b0724c14550edf7db91e3411e6",
             timestamp: new Date().valueOf(),
             data: params.params
@@ -19,7 +17,8 @@ function fetch(url, params) {
         axios
             .post(baseUrl + url, allParams, {
                 headers: {
-                    ACCESS_TOKEN: localStorage.getItem("api_token")
+                    // ACCESS_TOKEN: localStorage.getItem("api_token"),
+                    TOKEN: localStorage.getItem("api_token")
                 }
             })
             .then((response) => {
@@ -27,9 +26,8 @@ function fetch(url, params) {
                     if (response.data.data) {
                         response.data.data = JSON.parse(strDec(response.data.data, KEY));
                     }
-                    console.log(response.data.data);
                 } else if (response.data.code == 403) {
-                    Vue.$router.push({ path: '/login' })
+                    router.push({ path: '/login' })
                 }
                 resolve(response.data);
             })
