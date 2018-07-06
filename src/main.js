@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import { router } from './router'
+import * as filters from './util/filter'
 import commonComponents from "@/components"
 
 import Vant from "vant"
@@ -14,6 +15,9 @@ Vue.config.productionTip = false
 Object.keys(commonComponents).forEach(key => {
     Vue.component(key, commonComponents[key])
 })
+/* 注册过滤器 */
+// Object.keys(filters).forEach(k => Vue.filter(k, filters[k]));
+
 
 /* eslint-disable no-new */
 new Vue({

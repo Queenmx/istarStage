@@ -129,9 +129,8 @@
                 </div>
             </div>
             </div>
-            
+            <split></split> 
             <div class="card" v-if="status[flowFlag] != 16 && status[flowFlag] != 12">
-                <split></split> 
                 <van-cell-group>
                     <van-cell title="申请金额" :value="'￥'+applyPrice" />
                     <van-cell title="借款期限" :value="applyTerm+applyType[termType]" />
@@ -158,10 +157,11 @@
     </div>    
 </template>
 <script>
-//import func from "./vue-temp/vue-editor-bridge";
+import { repaymentDetail } from "@/util/axios.js";
 export default {
   data() {
     return {
+      orderId: this.$route.query.orderId,
       selectArr: [],
       applyType: {
         1: "天",
@@ -193,7 +193,7 @@ export default {
       bankName: "测试",
       bankNumber: "110",
       productRate: 11,
-      flowFlag: "待还款",
+      flowFlag: "已结清",
       repaidAmount: "6646.0",
       noRepayAmount: "40000.0",
       title: {
@@ -361,6 +361,7 @@ export default {
   },
   mounted: function() {
     this.getInitIndex();
+    this.init();
   },
   methods: {
     activeValue(flag) {
@@ -427,6 +428,15 @@ export default {
       result.length == this.selectArr.length
         ? (checkbox.checked = true)
         : (checkbox.checked = false);
+    },
+    async init() {
+      let data = {
+        orderId: this.orderId
+      };
+      let res = await repaymentDetail(data);
+      console.log(res);
+      if (res.code == 200) {
+      }
     }
   }
 };
@@ -568,7 +578,10 @@ export default {
     color: #686868;
   }
   .footer {
-    // height: rem(100px);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     font-size: rem(30px);
     line-height: rem(100px);
     background: #fff;

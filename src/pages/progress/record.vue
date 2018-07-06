@@ -4,18 +4,18 @@
         <split></split>
         <div class="container">
             <ul class="card wrap record-ul">
-                <li class="van-hairline--bottom" v-for="(item,index) in product" :key="index">
+                <li class="van-hairline--bottom" v-for="(item,index) in product" :key="index" @click="Detail(item)">
                     <van-row>
                         <van-col span="4">
                             <img class="pro-icon" src="../../assets/images/payments.png" />
                         </van-col>
                         <van-col span="10">
-                            <p class="name">{{item.name}}</p>
-                            <span class="time">{{item.time}}</span>
+                            <p class="name">{{item.productName}}</p>
+                            <span class="time">{{item.applyTime | Timeformate}}</span>
                         </van-col>
                         <van-col class="textright" span="10">
-                            <p :class="{status,'green':item.status=='3','orange':item.status =='2','red':item.status=='4'}">{{status[item.status]}}</p>
-                            <span class="money">￥{{item.value}}</span>
+                            <p :class="{status,'green':status[item.flowFlag]=='16','orange':status[item.flowFlag] =='12','red':status[item.flowFlag]=='14'}">{{item.flowFlag}}</p>
+                            <span class="money">{{item.applyPrice |moneyFormat}}</span>
                         </van-col>
                     </van-row>
                 </li>
@@ -24,49 +24,55 @@
     </div>
 </template>
 <script>
+import { loanRecord } from "@/util/axios.js";
+import { formateTime } from "@/util/util.js";
 export default {
   data() {
     return {
       status: {
-        0: "审核中",
-        1: "待放款",
-        2: "待还款",
-        3: "已结清",
-        4: "逾期"
+        提交申请: "0",
+        待绑卡: "1",
+        审核中: "2",
+        待签约: "3",
+        待确认: "8",
+        待放款: "4",
+        待还款: "12",
+        逾期: "14",
+        已结清: "16",
+        审核拒绝: "9",
+        贷款取消: "17"
       },
-      product: [
-        {
-          name: "星分期",
-          time: "2018-05-28",
-          status: "0",
-          value: "6000.00"
-        },
-        {
-          name: "星分期",
-          time: "2018-05-28",
-          status: "1",
-          value: "6000.00"
-        },
-        {
-          name: "星分期",
-          time: "2018-05-28",
-          status: "2",
-          value: "6000.00"
-        },
-        {
-          name: "星分期",
-          time: "2018-05-28",
-          status: "3",
-          value: "6000.00"
-        },
-        {
-          name: "星分期",
-          time: "2018-05-28",
-          status: "4",
-          value: "6000.00"
-        }
-      ]
+      product: []
     };
+  },
+  filters: {
+    Timeformate(val) {
+      let date = new Date(val * 1000);
+      return val ? formateTime(date, "yyyy-MM-dd") : "----/--/--";
+    },
+    moneyFormat(value) {
+      let money = 0;
+      value ? (money = value.toFixed(2)) : "";
+      return "￥" + money;
+    }
+  },
+  mounted() {
+    this.init();
+  },
+  methods: {
+    async init() {
+      let res = await loanRecord();
+      console.log(res);
+      if (res.code == 200) {
+        this.product = res.data;
+      }
+    },
+    Detail(item) {
+      this.$router.push({
+        path: "/progress/order",
+        query: { orderId: item.orderId }
+      });
+    }
   }
 };
 </script>

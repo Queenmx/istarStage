@@ -23,18 +23,16 @@
                         <van-button size="large" type="primary" :disabled="orderStatus!= 0" @click="apply">立即申请</van-button>
                     </div>
                 </div>
-                <split></split>
-                <!-- <router-link to="/verify"> -->
-                <van-row class="order-progress whitebg" type="flex" justify="space-between" v-if="orderStatus >=2">
+                <van-row class="order-progress whitebg" type="flex" justify="space-between" v-if="orderStatus ==2" @click="toComplete(status[flowFlag])">
+                    <split></split>
                     <van-col class="pro-name" span="10">
                         <h2>{{productName?productName :'----'}}</h2>
                         <span>{{auditedAmount | moneyFormat}}</span>
                     </van-col>
                     <van-col class="orderstatus textright" span="10">{{flowFlag}}</van-col>
                 </van-row>
-                <!-- </router-link> -->
-                <split></split>
                 <router-link to="/progress/order" v-if="orderStatus== 3">
+                <split></split>
                 <van-row class="order-progress whitebg" type="flex" justify="space-between" @click="toDetail">
                     <van-col class="pro-name" span="18">
                         <h2>还款计划</h2>
@@ -56,7 +54,7 @@
     </div>
 </template>
 <script>
-import { HomeStatus, baseInfo, isNewMsg } from "@/util/axios.js";
+import { HomeStatus, isNewMsg } from "@/util/axios.js";
 import { formateTime, setItem } from "@/util/util.js";
 
 export default {
@@ -66,17 +64,31 @@ export default {
       productName: "",
       auditedAmount: "",
       unable: "",
-      orderStatus: 3,
+      orderStatus: 0,
       flowFlag: "",
       loanamount: "",
       time: new Date(),
       images: [
-        require("../../assets/images/t1.jpg"),
-        require("../../assets/images/t2.jpg"),
-        require("../../assets/images/t3.jpg"),
-        require("../../assets/images/t4.jpg")
+        require("../../assets/images/banner1.png")
+        // require("../../assets/images/t2.jpg"),
+        // require("../../assets/images/t3.jpg"),
+        // require("../../assets/images/t4.jpg")
       ],
-      hasNews: false
+      status: {
+        提交申请: "0",
+        待绑卡: "1",
+        审核中: "2",
+        待签约: "3",
+        待确认: "8",
+        待放款: "4",
+        待还款: "12",
+        逾期: "14",
+        已结清: "16",
+        审核拒绝: "9",
+        贷款取消: "17"
+      },
+      hasNews: false,
+      orderId: ""
     };
   },
   filters: {
@@ -87,7 +99,6 @@ export default {
     }
   },
   mounted() {
-    // this.formateDate();
     this.init();
     // this.isNewMsg();
   },
@@ -99,23 +110,39 @@ export default {
       let res = await HomeStatus();
       console.log(res);
       if (res.code === 200) {
-        this.orderStatus = res.data.unAble;
+        // this.orderStatus = res.data.unAble;
         this.money = res.data.priceMax;
         this.productName = res.data.info.productName;
         this.auditedAmount = res.data.info.auditedAmount;
         this.flowFlag = res.data.info.flowFlag;
-        this.time = formateTime(res.data.info.canRepayTime, "yyyy-MM-dd");
+        res.data.info.canRepayTime
+          ? (this.time = formateTime(
+              new Date(res.data.info.canRepayTime),
+              "yyyy-MM-dd"
+            ))
+          : "";
         this.loanamount = res.data.info.periodAmount;
+        this.orderId = res.data.info.orderId;
       }
     },
     apply() {
       this.$router.push({ path: "/index/product" });
     },
-    formateDate() {
-      this.time = formateTime(this.time, "yyyy-MM-dd");
-    },
     toDetail() {
       this.$router.push({ path: "/progress" });
+    },
+    toComplete(flag) {
+      if (flag == 1) {
+        this.$router.push({
+          path: "/",
+          query: {}
+        });
+      } else if (flag == 3) {
+        this.$router.push({
+          path: "/verify",
+          query: { orderId: this.orderId }
+        });
+      }
     },
     //去往个人中心
     personcenter() {
@@ -138,7 +165,8 @@ export default {
 @import "../../assets/style/style.scss";
 .index {
   .van-swipe {
-    height: rem(400px);
+    height: rem(300px);
+    margin-top: -1px;
     img {
       width: 100%;
       height: 100%;
