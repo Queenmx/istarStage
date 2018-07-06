@@ -17,30 +17,30 @@
                 <split></split>
                 <div class="main-card whitebg">
                     <h3>借款金额（元）</h3>
-                    <span class="money">{{money}}</span>
+                    <span class="money">{{money?money:"00"}}</span>
                     <p class="tips">借1000，每天利息低至1元，具体以显示为准</p>
                     <div class="apply">
                         <van-button size="large" type="primary" :disabled="orderStatus!= 0" @click="apply">立即申请</van-button>
                     </div>
                 </div>
                 <split></split>
-                <router-link to="/verify" v-if="orderStatus == 2">
-                <van-row class="order-progress whitebg" type="flex" justify="space-between">
+                <!-- <router-link to="/verify"> -->
+                <van-row class="order-progress whitebg" type="flex" justify="space-between" v-if="orderStatus >=2">
                     <van-col class="pro-name" span="10">
                         <h2>{{productName?productName :'----'}}</h2>
                         <span>{{auditedAmount | moneyFormat}}</span>
                     </van-col>
                     <van-col class="orderstatus textright" span="10">{{flowFlag}}</van-col>
                 </van-row>
-                </router-link>
+                <!-- </router-link> -->
                 <split></split>
-                <router-link to="/progress/order" v-if="orderStatus== 4">
+                <router-link to="/progress/order" v-if="orderStatus== 3">
                 <van-row class="order-progress whitebg" type="flex" justify="space-between" @click="toDetail">
                     <van-col class="pro-name" span="18">
                         <h2>还款计划</h2>
                         <span>{{time}} | 应还金额 {{loanamount}}</span>
                     </van-col>
-                    <van-col class="orderstatus textright" span="6">{{orderStatus}}</van-col>
+                    <van-col class="orderstatus textright" span="6">{{flowFlag}}</van-col>
                 </van-row>
                 </router-link>
                 <split></split>
@@ -68,6 +68,7 @@ export default {
       unable: "",
       orderStatus: 3,
       flowFlag: "",
+      loanamount: "",
       time: new Date(),
       images: [
         require("../../assets/images/t1.jpg"),
@@ -75,7 +76,6 @@ export default {
         require("../../assets/images/t3.jpg"),
         require("../../assets/images/t4.jpg")
       ],
-
       hasNews: false
     };
   },
@@ -104,6 +104,8 @@ export default {
         this.productName = res.data.info.productName;
         this.auditedAmount = res.data.info.auditedAmount;
         this.flowFlag = res.data.info.flowFlag;
+        this.time = formateTime(res.data.info.canRepayTime, "yyyy-MM-dd");
+        this.loanamount = res.data.info.periodAmount;
       }
     },
     apply() {
