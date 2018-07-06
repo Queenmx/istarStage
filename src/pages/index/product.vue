@@ -78,6 +78,8 @@
     </div>
 </template>
 <script>
+import { datum } from "@/util/axios.js";
+
 export default {
   data() {
     return {
@@ -99,16 +101,24 @@ export default {
         credit_auth: "信用认证"
       },
       material: [
-        { name: "cert_auth", status: "1" },
-        { name: "apply_info", status: "1" },
-        { name: "other_info", status: "0" },
-        { name: "human_relation", status: "1" },
-        { name: "credit_auth", status: "0" }
+        // { name: "cert_auth", status: "1" },
+        // { name: "apply_info", status: "1" },
+        // { name: "other_info", status: "0" },
+        // { name: "human_relation", status: "1" },
+        // { name: "credit_auth", status: "0" }
       ]
     };
   },
-  mounted() {},
+  mounted() {
+    this.isApprove();
+  },
   methods: {
+    async isApprove(){
+      let res=await datum();
+      if(res.code==200){
+        this.material=res.data;
+      }
+    },
     onConfirm(value, index) {
       this.value = value + "元";
       this.isShowMoney = false;

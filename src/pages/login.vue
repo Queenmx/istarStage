@@ -135,7 +135,10 @@ export default {
         if(res.data.isRealName){
           this.$router.push({ path: "/"});         
         }else{
-          this.$router.push({ path: "/certification"}); 
+          this.$router.push({
+             path: "/certification",
+             query:{login:'1'}
+          }); 
         }
       }else{
         this.$toast(res.msg)
@@ -154,7 +157,10 @@ export default {
         if(res.data.isRealName){
           this.$router.push({ path: "/"});          
         }else{
-          this.$router.push({ path: "/certification"}); 
+          this.$router.push({ 
+            path: "/certification",
+            query:{login:'1'}
+          }); 
         }
         
       }else{
