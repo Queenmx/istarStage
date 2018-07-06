@@ -42,22 +42,21 @@
 
 
 <script>
-import { getUser,sendValidateCode,loginByCode } from "@/util/axios";
-import {  setItem } from "@/util/util.js";
+import { getUser, sendValidateCode, loginByCode } from "@/util/axios";
+import { setItem } from "@/util/util.js";
 export default {
   data() {
     return {
       active: 2,
       tabTag: ["账号登录", "验证码登录"],
-      sms: "",//验证码
+      sms: "", //验证码
       psd: "",
       phone: "",
       show: true,
       count: "",
       timer: null,
       msg: "发送验证码",
-      isDisable: false,
-      
+      isDisable: false
     };
   },
   methods: {
@@ -79,7 +78,6 @@ export default {
             this.count--;
             this.msg = this.count + "s后重新发送";
             this.isDisable = true;
-            
           } else {
             this.isDisable = false;
             this.msg = "发送验证码";
@@ -90,74 +88,75 @@ export default {
         this.sendValidateCode();
       }
     },
-    login(){      
-      if(this.phone){
+    login() {
+      if (this.phone) {
         if (!/^1(3|4|5|7|8)\d{9}$/.test(this.phone)) {
           this.$toast("请输入正确的手机号码");
           return false;
-        }        
-        if(this.active==0){//密码登录
-          if(this.psd){
+        }
+        if (this.active == 0) {
+          //密码登录
+          if (this.psd) {
             this.loginpsd();
-          }else{
-            this.$toast("密码不能为空")
-          }                   
-        }else{//验证码登录
-          if(this.sms){
+          } else {
+            this.$toast("密码不能为空");
+          }
+        } else {
+          //验证码登录
+          if (this.sms) {
             this.loginByCode();
-          }else{
-            this.$toast("验证码不能为空")
-          }          
-        }       
-      }else{
+          } else {
+            this.$toast("验证码不能为空");
+          }
+        }
+      } else {
         this.$toast("请输入手机号码");
-      }            
+      }
     },
     //发送验证码接口
-    async sendValidateCode(){
-      let data={
-        cusPhone:this.phone
-      }
+    async sendValidateCode() {
+      let data = {
+        cusPhone: this.phone
+      };
       let res = await sendValidateCode(data);
       this.$toast(res.msg);
-      
     },
     //密码登录
-    async loginpsd(){
-      let data={
-        cusPhone:this.phone,
-        cusPassword:this.psd
-      }
+    async loginpsd() {
+      let data = {
+        cusPhone: this.phone,
+        cusPassword: this.psd
+      };
       let res = await getUser(data);
-      if(res.code==200){        
-        setItem("api_token",res.data.token);
-        setItem('userInfo',data)
-        if(res.data.isRealName){
-          this.$router.push({ path: "/"});         
-        }else{
-          this.$router.push({ path: "/certification"}); 
+      console.log(res);
+      if (res.code == 200) {
+        setItem("api_token", res.data.token);
+        setItem("userInfo", data);
+        if (res.data.isRealName) {
+          this.$router.push({ path: "/" });
+        } else {
+          this.$router.push({ path: "/certification" });
         }
-      }else{
-        this.$toast(res.msg)
+      } else {
+        this.$toast(res.msg);
       }
     },
     //验证码登录
-    async loginByCode(){
-      let data={
-        cusPhone:this.phone,
-        cusCode:this.sms
-      }
+    async loginByCode() {
+      let data = {
+        cusPhone: this.phone,
+        cusCode: this.sms
+      };
       let res = await loginByCode(data);
-      if(res.code==200){        
-        setItem("api_token",res.data.token);
-        setItem('userInfo',data);
-        if(res.data.isRealName){
-          this.$router.push({ path: "/"});          
-        }else{
-          this.$router.push({ path: "/certification"}); 
+      if (res.code == 200) {
+        setItem("api_token", res.data.token);
+        setItem("userInfo", data);
+        if (res.data.isRealName) {
+          this.$router.push({ path: "/" });
+        } else {
+          this.$router.push({ path: "/certification" });
         }
-        
-      }else{
+      } else {
         this.$toast(res.msg);
       }
     }
@@ -167,21 +166,21 @@ export default {
 <style lang="scss">
 @import "../assets/style/common.scss";
 @import "../assets/style/style.scss";
-.logo {  
-  height: rem(533px);  
+.logo {
+  height: rem(533px);
   text-align: center;
   font-size: rem(36px);
   overflow: hidden;
   background-image: url("../assets/images/login-bg.png");
-  background-size:100%;
-  .headicon{
-    display:block;
-    width:rem(160px);
-    height:rem(160px);
-    line-height:rem(160px);
-    border-radius:50%;
+  background-size: 100%;
+  .headicon {
+    display: block;
+    width: rem(160px);
+    height: rem(160px);
+    line-height: rem(160px);
+    border-radius: 50%;
     background: #fff;
-    margin:rem(104px) auto;
+    margin: rem(104px) auto;
   }
 }
 .forget {
@@ -189,12 +188,13 @@ export default {
   text-align: right;
   color: $blue;
   font-size: rem(30px);
-  margin-top:rem(330px);
+  margin-top: rem(330px);
 }
 .login {
   position: relative;
-  .van-tabs__nav--card .van-tab.van-tab--active,.van-tabs__nav{
-    background:rgba(248,248,248,.2);
+  .van-tabs__nav--card .van-tab.van-tab--active,
+  .van-tabs__nav {
+    background: rgba(248, 248, 248, 0.2);
     color: #fff;
   }
   .van-tabs__nav--card .van-tab {
@@ -203,7 +203,7 @@ export default {
     line-height: rem(100px);
   }
   .van-tabs__nav--card {
-    border:none;
+    border: none;
   }
   .van-tabs--card .van-tabs__wrap,
   .van-tabs__nav--card {
@@ -216,26 +216,23 @@ export default {
     // border:1px solid $blue;
     @include box-shadow(0 12px 15px rgba(0, 0, 0, 0.1));
     border-radius: rem(10px);
-    .van-cell-group{
+    .van-cell-group {
       position: relative;
     }
-    .psdicon{
-      @include icon(41px,49px);     
+    .psdicon {
+      @include icon(41px, 49px);
       position: absolute;
-      top:30%;
+      top: 30%;
     }
-    .peo{
-       background-image: url("../assets/images/peo.png");
+    .peo {
+      background-image: url("../assets/images/peo.png");
     }
-    .lock{
-       background-image: url("../assets/images/lock.png");
+    .lock {
+      background-image: url("../assets/images/lock.png");
     }
-    .safe{
-     
-       background-image: url("../assets/images/safe.png");
-      
+    .safe {
+      background-image: url("../assets/images/safe.png");
     }
-    
   }
   .van-tabs__nav--card {
     margin: 0;
@@ -246,23 +243,25 @@ export default {
   }
   .van-cell {
     padding: rem(40px) rem(40px);
-    background-color:transparent;
+    background-color: transparent;
   }
   //   .van-hairline--top-bottom::after {
   //     border-width: 0;
   //   }
-  .van-row{
+  .van-row {
     position: absolute;
-    top:rem(434px);
+    top: rem(434px);
     width: 100%;
   }
-  .van-field .van-cell__value{left:rem(30px);}
-  .settime{background:#fff;
-    color:#4c9dec;
-    border-radius:rem(45px);
-    padding:0 rem(25px);
+  .van-field .van-cell__value {
+    left: rem(30px);
   }
-  
+  .settime {
+    background: #fff;
+    color: #4c9dec;
+    border-radius: rem(45px);
+    padding: 0 rem(25px);
+  }
 }
 </style>
 
