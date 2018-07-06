@@ -7,7 +7,7 @@
         <van-col span="24">
             <van-tabs class="loginTabs" v-model="active" type="card" swipeable>
                 <van-tab title="账号登录">
-                    <van-cell-group>
+                    <van-cell-group :border="isBorder">
                         <i class="psdicon peo"></i>
                         <van-field placeholder="请输入手机号码" v-model="phone" />
                     </van-cell-group>
@@ -17,7 +17,7 @@
                     </van-cell-group>
                 </van-tab>
                 <van-tab title="验证码登录">
-                    <van-cell-group>
+                    <van-cell-group :border="isBorder">
                         <i class="psdicon peo"></i>
                         <van-field placeholder="请输入手机号码" v-model="phone" />
                     </van-cell-group>
@@ -57,7 +57,7 @@ export default {
       timer: null,
       msg: "发送验证码",
       isDisable: false,
-      
+      isBorder:false
     };
   },
   methods: {
@@ -193,14 +193,16 @@ export default {
 }
 .login {
   position: relative;
-  .van-tabs__nav--card .van-tab.van-tab--active,.van-tabs__nav{
+  .van-tabs__nav--card .van-tab,.van-tabs__nav{
     background:rgba(248,248,248,.2);
     color: #fff;
+    line-height: rem(100px);
+    border-right:none;
   }
-  .van-tabs__nav--card .van-tab {
+  .van-tabs__nav--card .van-tab.van-tab--active {
     border-right: none;
     color: $blue;
-    line-height: rem(100px);
+    background:#fff;
   }
   .van-tabs__nav--card {
     border:none;
@@ -241,8 +243,10 @@ export default {
     margin: 0;
   }
   .van-tabs__content {
-    width: rem(555px);
+    // width: rem(555px);
     margin: rem(40px) auto;
+    padding:0 rem(25px);
+    background-color:#fff;
   }
   .van-cell {
     padding: rem(40px) rem(40px);
