@@ -25,6 +25,7 @@ function fetch(url, params) {
                 if (response.data.code == 200) {
                     if (response.data.data) {
                         response.data.data = JSON.parse(strDec(response.data.data, KEY));
+                        console.log(response.data.data)
                     }
                 } else if (response.data.code == 403) {
                     router.push({ path: '/login' })
@@ -123,3 +124,8 @@ export const repaymentDetail = params => {
     params = JSON.stringify(params);
     return fetch("/repayment/repaymentDetail", { params });
 }
+//资料列表是否认证
+export const datum = params => {
+    params = JSON.stringify(params);
+    return fetch("proInfo/datum", { params });
+};

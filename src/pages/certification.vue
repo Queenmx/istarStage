@@ -15,12 +15,14 @@
 </template>
 <script>
 import { realNameAuth } from "@/util/axios";
+import {  getItem } from "@/util/util.js";
 
 export default {
   data() {
     return {
         name: "",
-        idCard: ""
+        idCard: "",
+        userInfo:getItem("userInfo")
     };
   },
   methods:{
@@ -40,15 +42,19 @@ export default {
         var that=this;
         let data={
             cusName:this.name,
-            cusIdcard:this.idCard
+            cusIdcard:this.idCard,
+            cusPhone:this.userInfo.cusPhone
         }
         let res = await realNameAuth(data);
         if(res.code==200){
             this.$toast(res.msg); 
-            setTimeout(function(){
+            console.log(this.$route.query.login)
+            if(this.$route.query.login){
                 that.$router.push({path:"/"});
-            },2000)
-            
+            }else{
+                that.$router.push({path:"/login"});
+            }
+                        
         }else{
             this.$toast(res.msg); 
         }          

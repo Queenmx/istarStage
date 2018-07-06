@@ -129,14 +129,16 @@ export default {
         cusPassword: this.psd
       };
       let res = await getUser(data);
-      console.log(res);
-      if (res.code == 200) {
-        setItem("api_token", res.data.token);
-        setItem("userInfo", data);
-        if (res.data.isRealName) {
-          this.$router.push({ path: "/" });
-        } else {
-          this.$router.push({ path: "/certification" });
+      if(res.code==200){        
+        setItem("api_token",res.data.token);
+        setItem('userInfo',data)
+        if(res.data.isRealName){
+          this.$router.push({ path: "/"});         
+        }else{
+          this.$router.push({
+             path: "/certification",
+             query:{login:'1'}
+          }); 
         }
       } else {
         this.$toast(res.msg);
@@ -149,13 +151,17 @@ export default {
         cusCode: this.sms
       };
       let res = await loginByCode(data);
-      if (res.code == 200) {
-        setItem("api_token", res.data.token);
-        setItem("userInfo", data);
-        if (res.data.isRealName) {
-          this.$router.push({ path: "/" });
-        } else {
-          this.$router.push({ path: "/certification" });
+      if(res.code==200){        
+        setItem("api_token",res.data.token);
+        setItem('userInfo',data);
+        if(res.data.isRealName){
+          this.$router.push({ path: "/"});          
+        }else{
+          this.$router.push({ 
+            path: "/certification",
+            query:{login:'1'}
+          }); 
+
         }
       } else {
         this.$toast(res.msg);

@@ -39,6 +39,7 @@ export default {
   methods: {
    exit(){
       delItem("userInfo");
+      delItem("api_token");      
       this.$router.push({ path: "/login" });
    }
   }

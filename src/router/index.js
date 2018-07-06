@@ -155,14 +155,28 @@ const router = new Router({
 })
 import { getItem, setItem } from "../util/util";
 router.beforeEach((to, from, next) => {
-    if (to.path !== "/login" && !getItem("api_token")) {
-        // this route requires auth, check if logged in
-        // if not, redirect to login page.
+    
+    const nextRoute = [ '/sign', '/forget', '/setpsd','/certification','/login'];
+    if(nextRoute.indexOf(to.path)<0&&!getItem('api_token')){
+        console.log("a")
         next({
             path: "/login"
         });
-    } else {
+    }else{
         next(); // 确保一定要调用 next()
     }
+
+
+
+        // if (to.path !== "/login"&&to.path !== "/sign" && !getItem("api_token")) {
+        //     // this route requires auth, check if logged in
+        //     // if not, redirect to login page.
+        //     next({
+        //         path: "/login"
+        //     });
+        // } else {
+        //     next(); // 确保一定要调用 next()
+        // }
+
 });
 export { router };

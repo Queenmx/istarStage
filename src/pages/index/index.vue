@@ -100,7 +100,7 @@ export default {
   },
   mounted() {
     this.init();
-    // this.isNewMsg();
+    this.isNewMsg();
   },
   methods: {
     init() {
