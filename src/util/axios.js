@@ -127,5 +127,5 @@ export const repaymentDetail = params => {
 //资料列表是否认证
 export const datum = params => {
     params = JSON.stringify(params);
-    return fetch("proInfo/datum", { params });
+    return fetch("proInfo/apply", { params });
 };

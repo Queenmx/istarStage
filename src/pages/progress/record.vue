@@ -20,6 +20,7 @@
                     </van-row>
                 </li>
             </ul>
+            <div v-if="!product.length">暂无记录</div>
         </div>
     </div>
 </template>
