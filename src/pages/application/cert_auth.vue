@@ -68,21 +68,24 @@ export default {
 <style lang="scss">
 @import "../../assets/style/common.scss";
 .cert_auth {
-  .idcard {
-    padding-top: rem(45px);
-    padding-bottom: rem(50px);
-    font-size: rem(24px);
-    img {
-      width: 100%;
+    .idcard {
+        padding-top: rem(45px);
+        padding-bottom: rem(50px);
+        font-size: rem(24px);
+        img {
+        width: 100%;
+        }
+        span {
+        padding-top: rem(20px);
+        padding-bottom: rem(40px);
+        }
     }
-    span {
-      padding-top: rem(20px);
-      padding-bottom: rem(40px);
+    .backimg {
+        padding-top: rem(60px);
     }
-  }
-  .backimg {
-    padding-top: rem(60px);
-  }
+    .van-button--primary{
+        border:none;
+    }
 }
 </style>
 

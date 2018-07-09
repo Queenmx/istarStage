@@ -46,10 +46,12 @@
             </ul>
             <tips></tips>
         </div>
-        <van-button type="primary" bottom-action>提交</van-button>
+        <van-button type="primary" bottom-action @click="confirmbtn" :class="isShowbtn?'':'hide'">提交</van-button>
     </div>
 </template>
 <script>
+import {relationship,getrelation  } from "@/util/axios";
+
 export default {
   data() {
     return {
@@ -61,8 +63,12 @@ export default {
       relationphone: "",
       isShowDirect: false,
       isShowRelation: false,
-      columns: ["父母", "配偶", "子女", "朋友", "同事", "同学"]
+      columns: ["父母", "配偶", "子女", "朋友", "同事", "同学"],
+      isShowbtn:true
     };
+  },
+  mounted(){
+      this.init();
   },
   methods: {
     onConfirm(value, index) {
@@ -79,6 +85,56 @@ export default {
     Relation(value, index) {
       this.relation = value;
       this.isShowRelation = false;
+    },
+    confirmbtn(){
+        if(this.direct&&this.name&&this.phone&&this.relation&&this.relationname&&this.relationphone){
+            if (!/^1(3|4|5|7|8)\d{9}$/.test(this.phone)||!/^1(3|4|5|7|8)\d{9}$/.test(this.relationphone)) {
+                this.$toast("请输入正确的手机号码");                
+            }else{
+                 this.relationship();
+            }           
+        }else{
+            this.$toast("请填写完信息");
+        }
+    },
+    async init(){
+        let res=await getrelation();
+        if(res.code==200){
+            // this.isShowbtn=false;
+            // this.name;
+            // this.phone;
+            // this.direct;
+            // this.relationname;
+            // this.relationphone;
+            // this.relation;
+        }
+    },
+    async relationship(){
+        let data=[];
+        let tep={};
+        var temp=[];
+        var that=this;
+        
+        tep.contactName=that.name;
+        tep.contactPhone=that.phone;
+        tep.contactRelation=that.direct;
+        temp.contactName=that.relationname;
+        temp.contactPhone=that.relationphone;
+        temp.contactRelation=that.relation;
+        data[0]=tep;
+        data[1]=temp;
+        
+        console.log(data);
+        let res=await relationship(data);
+        if(res.code==200){
+            this.$toast(res.msg);
+            this.$router.push({ path: "/index/product"});
+        }else{
+            this.$toast(res.msg);
+        }
+       
+            
+        
     }
   }
 };
@@ -93,5 +149,9 @@ export default {
   .van-cell-group {
     border-top: none;
   }
+  .van-button--primary{
+    border:none;
+  }
+  .hide{display:none;}
 }
 </style>
