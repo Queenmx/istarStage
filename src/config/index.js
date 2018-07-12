@@ -4,7 +4,7 @@ let imgBaseUrl = "http://xrjf.oss-cn-shanghai.aliyuncs.com/";
 const KEY = "JJPT@20200606@H5";
 if (process.env.NODE_ENV === "development") {
   // baseUrl = "http://whxr.free.ngrok.cc/";
-  baseUrl = "http://whxr.free.ngrok.cc/";
+  baseUrl = "http://wuhanxingrong.vicp.io:28896/";
   // baseUrl = "http://192.168.0.49:8888/";
 } else if (process.env.NODE_ENV === "production") {
   baseUrl = "http://fsapi.starjrcs.com:8887/"; //正式地址
