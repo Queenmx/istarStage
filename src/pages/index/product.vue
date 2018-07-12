@@ -115,14 +115,14 @@ export default {
     };
   },
   mounted() {
-    // this.isApprove();
+    this.isApprove();
   },
   methods: {
     async isApprove() {
       let res = await datum();
       console.log(res);
       if (res.code == 200) {
-        // this.material = res.data.infoList;
+        this.material = res.data.infoList;
         let priceMin = res.data.proInfo.priceMin;
         this.priceMax = res.data.proInfo.priceMax;
         let priceIncrement = res.data.proInfo.priceIncrement;
