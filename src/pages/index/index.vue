@@ -2,7 +2,7 @@
     <div class="index">
         <v-header>
             <i slot="left"><van-icon name="contact" @click='personcenter'/></i>
-            <i slot="right"><van-icon name="chat" /></i>
+            <i slot="right"><van-icon name="chat" @click="message"/></i>
         </v-header>
         <div class="container">
             <van-swipe :autoplay="3000">
@@ -53,6 +53,7 @@
     </div>
 </template>
 <script>
+import { HomeStatus, baseInfo } from "@/util/axios.js";
 import { formateTime, setItem } from "@/util/util.js";
 export default {
   data() {
@@ -66,13 +67,34 @@ export default {
         require("../../assets/images/t2.jpg"),
         require("../../assets/images/t3.jpg"),
         require("../../assets/images/t4.jpg")
-      ]
+      ],
+      count: ""
     };
   },
   mounted() {
-    this.formateDate();
+    // this.formateDate();
+    this.init();
   },
   methods: {
+    init() {
+      this.baseinfo();
+      this.getInfo();
+    },
+    async getInfo() {
+      let res = await HomeStatus();
+      if (res.code === "200") {
+        this.orderStatus =
+          res.data.unAble == 3
+            ? "待签约"
+            : res.data.unAble == 4 ? "待还款" : "";
+      }
+    },
+    async baseinfo() {
+      let res = await baseInfo();
+      if (res.code === "200") {
+        this.money = res.data.priceMax;
+      }
+    },
     apply() {
       this.$router.push({ path: "/index/product" });
     },
@@ -83,8 +105,11 @@ export default {
       this.$router.push({ path: "/progress" });
     },
     //去往个人中心
-    personcenter(){
+    personcenter() {
       this.$router.push({ path: "/index/personcenter" });
+    },
+    message() {
+      this.$router.push({ path: "/index/message" });
     }
   }
 };

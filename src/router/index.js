@@ -16,6 +16,7 @@ import opinion from '@/pages/index/opinion'
 import changetel from '@/pages/index/changetel'
 import aboutus from '@/pages/index/aboutus'
 import quesDetail from '@/pages/index/quesDetail'
+import message from '@/pages/index/message'
 
 import certAuth from '@/pages/application/cert_auth'
 import applyInfo from '@/pages/application/apply_info'
@@ -96,6 +97,10 @@ const router = new Router({
         {
             path: '/index/quesDetail',
             component: quesDetail
+        },
+        {
+            path: '/index/message',
+            component: message
         },
 
 

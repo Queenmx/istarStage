@@ -11,11 +11,14 @@
             </van-field>
         </van-cell-group>
         <div class="btnBox">
-            <van-button size="large" type="primary">下一步</van-button>
+            <van-button size="large" type="primary" @click="register">下一步</van-button>
         </div>
     </div>
 </template>
 <script>
+import { sendValidateCode,VaCodeAndPhone } from "@/util/axios";
+import {  setItem } from "@/util/util.js";
+
 export default {
   data() {
     return {
@@ -29,6 +32,10 @@ export default {
   },
   methods: {
     settime() {
+      if (!/^1(3|4|5|7|8)\d{9}$/.test(this.psd)) {
+        this.$toast("请输入正确的手机号码");
+        return false;
+      }
       const TIME_COUNT = 60;
       if (!this.timer) {
         this.count = TIME_COUNT;
@@ -44,8 +51,46 @@ export default {
             this.timer = null;
           }
         }, 1000);
+        this.sendValidateCode();
       }
-    }
+    },
+    //发送验证码接口
+    async sendValidateCode(){
+      let data={
+        cusPhone:this.psd
+      }
+      let res = await sendValidateCode(data);
+      this.$toast(res.msg);      
+    },
+    //忘记密码
+    async VaCodeAndPhone(){
+      let data={
+        cusPhone:this.psd,
+        cusCode:this.sms
+      }
+      let res = await VaCodeAndPhone(data);
+      if(res.code==200){
+        
+        // const temp=Object.assign(data,{cusId:res.data});
+        
+        setItem("userInfo",data);
+        this.$router.push({ path: "/setpsd"});
+      }else{
+        this.$toast(res.msg); 
+      }
+           
+    },
+    register(){
+      if(this.psd){
+        if(this.sms){
+          this.VaCodeAndPhone();
+        }else{
+          this.$toast("请输入验证码");
+        }
+      }else{
+        this.$toast("请输入手机号");
+      }
+    },
   }
 };
 </script>

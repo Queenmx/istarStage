@@ -12,12 +12,15 @@
             </van-cell-group>
         </div>
         <div class="btnBox">
-            <van-button size="large" type="primary">注册</van-button>
+            <van-button size="large" type="primary" @click="register">注册</van-button>
             <van-button size="large" type="primary" @click="toLogin">已有账号，去登录</van-button>
         </div>
     </div>
 </template>
 <script>
+import { sendValidateCode,registerByCusPhone } from "@/util/axios";
+import {  setItem } from "@/util/util.js";
+
 export default {
   data() {
     return {
@@ -34,6 +37,10 @@ export default {
       this.$router.push({ path: "/login" });
     },
     settime() {
+      if (!/^1(3|4|5|7|8)\d{9}$/.test(this.phone)) {
+        this.$toast("请输入正确的手机号码");
+        return false;
+      }
       const TIME_COUNT = 60;
       if (!this.timer) {
         this.count = TIME_COUNT;
@@ -49,8 +56,46 @@ export default {
             this.timer = null;
           }
         }, 1000);
+        this.sendValidateCode();
       }
-    }
+    },
+    register(){
+      if(this.phone){
+        if(this.sms){
+          this.registerByCusPhone();
+        }else{
+          this.$toast("请输入验证码");
+        }
+      }else{
+        this.$toast("请输入手机号");
+      }
+    },
+    //发送验证码接口
+    async sendValidateCode(){
+      let data={
+        cusPhone:this.phone
+      }
+      let res = await sendValidateCode(data);
+      this.$toast(res.msg);      
+    },
+    //注册接口
+    async registerByCusPhone(){
+      let data={
+        cusPhone:this.phone,
+        cusCode:this.sms
+      }
+      let res = await registerByCusPhone(data);
+      if(res.code==200){
+        this.$toast(res.msg); 
+        // const temp=Object.assign(data,{cusId:res.data});
+        
+        setItem("userInfo",data);
+        this.$router.push({ path: "/setpsd"});
+      }else{
+        this.$toast(res.msg); 
+      }
+           
+    },
   }
 };
 </script>

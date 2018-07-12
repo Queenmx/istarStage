@@ -9,7 +9,7 @@
                         <van-field placeholder="请输入手机号码" left-icon="contact" v-model="phone" />
                     </van-cell-group>
                     <van-cell-group>
-                        <van-field  type="password" placeholder="请输入密码" left-icon="password-not-view" v-model="psd" />
+                        <van-field  :type="isSee?'text':'password'" placeholder="请输入密码" :left-icon="isSee?'password-view':'password-not-view'" v-model="psd" @click="isSee=!isSee"/>
                     </van-cell-group>
                 </van-tab>
                 <van-tab title="验证码登录">
@@ -36,21 +36,22 @@
 
 
 <script>
-import { getUser,sendValidateCode } from "@/util/axios";
+import { getUser,sendValidateCode,loginByCode } from "@/util/axios";
 import {  setItem } from "@/util/util.js";
 export default {
   data() {
     return {
       active: 2,
       tabTag: ["账号登录", "验证码登录"],
-      sms: "",
+      sms: "",//验证码
       psd: "",
       phone: "",
       show: true,
       count: "",
       timer: null,
       msg: "发送验证码",
-      isDisable: false
+      isDisable: false,
+      isSee:false
     };
   },
   methods: {
@@ -97,7 +98,7 @@ export default {
           }                   
         }else{//验证码登录
           if(this.sms){
-            this.logincode();
+            this.loginByCode();
           }else{
             this.$toast("验证码不能为空")
           }          
@@ -131,17 +132,18 @@ export default {
       }
     },
     //验证码登录
-    async logincode(){
+    async loginByCode(){
       let data={
-        sms:this.sms
+        cusPhone:this.phone,
+        cusCode:this.sms
       }
-      let res = await (data);
+      let res = await loginByCode(data);
       if(res.code==200){        
         setItem("api_token",res.data.token);
-        setItem('userInfo',data)
-        // this.$router.push({ path: "/"});
+        setItem('userInfo',data);
+        this.$router.push({ path: "/"});
       }else{
-        this.$toast(res.msg)
+        this.$toast(res.msg);
       }
     }
   }

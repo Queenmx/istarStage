@@ -1,6 +1,13 @@
 <template>
     <div class="my">
-        <v-header :title="title"></v-header>
+        <!-- <v-header :title="title"></v-header> -->
+        <div class="wrap flex header">
+          <div class="left">            
+            <van-icon name="arrow-left" @click="back"/>            
+          </div>
+          <div class="rest ellipsis title">{{title}}</div>
+          <div class="right"></div>
+        </div>
         <div>
            <section>
               <router-link class="wrap flex item" v-for="(item,index) in moreInfo" :key="index" :to="item.url">
@@ -34,7 +41,9 @@ export default {
     
   },
   methods: {
-   
+   back(){
+     this.$router.push({ path: "/"});
+   }
   }
 };
 </script>
@@ -67,6 +76,40 @@ export default {
     position:absolute;
     bottom:rem(64px);
   }
+  .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: rem(95px);
+  text-align: center;
+  font-size: rem(36px);
+  color: #fff;
+  background: $blue;
+  z-index: 100;
+  .left,
+  .right {
+    width: rem(110px);
+  }
+  .left {
+    text-align: left;
+  }
+  .right {
+    text-align: right;
+  }
+  //   .left {
+  //     padding-left: rem(10px);
+  //     padding-right: rem(15px);
+  //   }
+  //   .right {
+  //     padding-left: rem(15px);
+  //     padding-right: rem(10px);
+  //   }
+  .arrow-left {
+    font-size: rem(30px);
+    color: #fff;
+  }
+}
 }
 </style>
 
