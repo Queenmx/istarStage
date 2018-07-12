@@ -5,7 +5,7 @@
             <div class="card">
                 <van-row type="flex" justify="space-between" class="idcard">
                     <van-col span="10" class="textcenter">
-                        <van-uploader :after-read="onRead">
+                        <van-uploader :after-read="onRead" accept="image/*" capture="camera">
                             <img src="../../assets/images/camera.png" />
                         </van-uploader>
                         <span class="inblock">身份证照（人像面）</span>
@@ -19,11 +19,11 @@
                     <van-field label="您的姓名" placeholder="拍摄身份证照片后自动识别"  v-model="name" />
                 </van-cell-group>
                 <van-cell-group>
-                    <van-field label="身份证号码" placeholder="拍摄身份证照片后自动识别"  v-model="idCard" />
+                    <van-field label="身份证号码" placeholder="拍摄身份证照片后自动识别"  v-model="idCardnum" />
                 </van-cell-group>
                 <van-row type="flex" justify="space-between" class="idcard backimg">
                     <van-col span="10" class="textcenter">
-                        <van-uploader :after-read="onRead">
+                        <van-uploader :after-read="onRead" disabled>
                             <img src="../../assets/images/camera.png" />
                         </van-uploader>
                         <span class="inblock">身份证照（国徽面）</span>
@@ -34,11 +34,13 @@
                     </van-col>
                 </van-row>
                 <van-cell-group>
-                    <van-field label="身份证有效期" placeholder="拍摄身份证照片后自动识别"  v-model="idCardnum" />
+                    <van-field label="身份证有效期" placeholder="拍摄身份证照片后自动识别"  v-model="effectTime" />
                 </van-cell-group>
                 <van-row type="flex" justify="space-between" class="idcard backimg">
                     <van-col span="10" class="textcenter">
-                        <img src="../../assets/images/ht.png" />
+                        <van-uploader :after-read="onRead" accept="video/*" capture="camcorder">
+                            <img src="../../assets/images/ht.png" />
+                        </van-uploader>
                         <span class="inblock">活体校验</span>
                     </van-col>
                     <van-col span="10" class="textcenter">
@@ -59,21 +61,37 @@
     </div>
 </template>
 <script>
+import { certAuth } from "@/util/axios.js";
 export default {
   data() {
     return {
       name: "",
       idCard: "",
       idCardnum: "",
+      effectTime: "",
       imgFile: "",
       msg: "",
       imgID1: "",
-      imgID2: ""
+      imgID2: "",
+      video: ""
     };
   },
   methods: {
     onRead(file) {
       console.log(file);
+      this.uploadImg(file.content);
+    },
+    async uploadImg(img) {
+      let data = {
+        file: img
+      };
+      console.log(data);
+      let res = await certAuth(data);
+      if (res.code == 200) {
+        this.name = res.data.cusName;
+        this.idCardnum = res.data.cusIdcard;
+        this.effectTime = res.data.effectTime;
+      }
     }
   }
 };
