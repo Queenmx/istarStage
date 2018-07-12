@@ -6,20 +6,20 @@
             <split></split>
             <h3 class="cardtitle van-hairline--bottom wrap"><span>基础认证</span></h3>
             <ul class="wrap card">
-                <li class="credit" v-for="(item,index) in creditList.baseAuth" :key="index">
-                    <div @click="bindEvent(item.name)">
-                        <img :src="require('../../assets/images/'+item.name+'.png')" />
-                        <span>{{credit[item.name]}}</span>
+                <li class="credit" v-for="(item,index) in baseAuth" :key="index">
+                    <div @click="bindEvent(item.fieldName)">
+                        <img :src="require('../../assets/images/'+item.fieldName+'.png')" />
+                        <span>{{credit[item.fieldName]}}</span>
                     </div>
                 </li>
             </ul> 
             <split></split>
             <h3 class="cardtitle van-hairline--bottom wrap"><span>更多认证</span></h3>
             <ul class="wrap card">
-                <li class="credit" v-for="(item,index) in creditList.moreAuth" :key="index">
-                    <div @click="bindEvent(item.name)">
-                        <img :src="require('../../assets/images/'+item.name+'.png')" />
-                        <span>{{credit[item.name]}}</span>
+                <li class="credit" v-for="(item,index) in moreAuth" :key="index">
+                    <div @click="bindEvent(item.fieldName)">
+                        <img :src="require('../../assets/images/'+item.fieldName+'.png')" />
+                        <span>{{credit[item.fieldName]}}</span>
                     </div>
                 </li>
             </ul>
@@ -28,6 +28,7 @@
     </div>
 </template>
 <script>
+import { proDetail } from "@/util/axios.js";
 export default {
   data() {
     return {
@@ -42,41 +43,13 @@ export default {
         credit_zmxy: "芝麻信用认证",
         credit_asset: "资产认证"
       },
-      creditList: {
-        baseAuth: [
-          {
-            name: "credit_phone",
-            field_value: "tianji"
-          },
-          {
-            name: "credit_card",
-            field_value: "tianji"
-          },
-          {
-            name: "credit_bank",
-            field_value: "tianji"
-          }
-        ],
-        moreAuth: [
-          {
-            name: "credit_jd",
-            field_value: "tianji"
-          },
-          {
-            name: "credit_taobao",
-            field_value: "tianji"
-          },
-          {
-            name: "credit_fund",
-            field_value: "tianji"
-          },
-          {
-            name: "credit_asset",
-            field_value: "tianji"
-          }
-        ]
-      }
+      baseAuth: [],
+      moreAuth: [],
+      productId: this.$route.query.productId
     };
+  },
+  mounted() {
+    this.init();
   },
   methods: {
     bindLink(url) {
@@ -102,6 +75,18 @@ export default {
         this.bindLink("/application/8");
       } else if (flag === "credit_asset") {
         this.bindLink("/application/assetsPage");
+      }
+    },
+    async init() {
+      let data = {
+        productId: this.productId,
+        type: "auth"
+      };
+      let res = await proDetail(data);
+      console.log(res);
+      if (res.code == 200) {
+        this.baseAuth = res.data.baseAuth;
+        this.moreAuth = res.data.moreAuth;
       }
     }
   }
@@ -136,6 +121,9 @@ export default {
         color: $lightGrey;
       }
     }
+  }
+  .van-button--primary {
+    border: none;
   }
 }
 </style>

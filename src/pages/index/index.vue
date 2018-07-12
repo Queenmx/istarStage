@@ -2,7 +2,10 @@
     <div class="index">
         <v-header>
             <i slot="left"><van-icon name="contact" @click='personcenter'/></i>
-            <i slot="right"><van-icon name="chat" @click="message"/></i>
+            <i slot="right" class="msg">
+              <van-icon name="chat" @click="message"/>
+              <span class="redmark" v-if="hasNews"></span>
+            </i>
         </v-header>
         <div class="container">
             <van-swipe :autoplay="3000">
@@ -14,34 +17,34 @@
                 <split></split>
                 <div class="main-card whitebg">
                     <h3>借款金额（元）</h3>
-                    <span class="money">{{money}}</span>
+                    <span class="money">{{money?money:"00"}}</span>
                     <p class="tips">借1000，每天利息低至1元，具体以显示为准</p>
                     <div class="apply">
-                        <van-button size="large" type="primary" @click="apply">立即申请</van-button>
+                        <van-button size="large" type="primary" :disabled="orderStatus!= 0" @click="apply">立即申请</van-button>
                     </div>
                 </div>
+                <div v-if="orderStatus == 2" @click="toComplete(status[flowFlag])">
                 <split></split>
-                <router-link to="/verify">
                 <van-row class="order-progress whitebg" type="flex" justify="space-between">
                     <van-col class="pro-name" span="10">
-                        <h2>星分期</h2>
-                        <span>￥{{loanamount}}</span>
+                        <h2>{{productName?productName :'----'}}</h2>
+                        <span>{{auditedAmount | moneyFormat}}</span>
                     </van-col>
-                    <van-col class="orderstatus textright" span="10">{{orderStatus}}</van-col>
+                    <van-col class="orderstatus textright" span="10">{{flowFlag}}</van-col>
                 </van-row>
-                </router-link>
+                </div>
+                <router-link to="/progress/order" v-if="orderStatus== 3">
                 <split></split>
-                <router-link to="/progress/order">
                 <van-row class="order-progress whitebg" type="flex" justify="space-between" @click="toDetail">
                     <van-col class="pro-name" span="18">
                         <h2>还款计划</h2>
                         <span>{{time}} | 应还金额 {{loanamount}}</span>
                     </van-col>
-                    <van-col class="orderstatus textright" span="6">{{orderStatus}}</van-col>
+                    <van-col class="orderstatus textright" span="6">{{flowFlag}}</van-col>
                 </van-row>
                 </router-link>
-                <split></split>
                 <router-link to="/progress/record">
+                <split></split>
                     <van-row class="order-progress whitebg" type="flex" justify="space-between">
                         <van-col class="progress-name" span="10">借款记录</van-col>
                         <van-col class="textright arrow" span="10"><van-icon name="arrow"/></van-col>
@@ -53,56 +56,92 @@
     </div>
 </template>
 <script>
-import { HomeStatus, baseInfo } from "@/util/axios.js";
+import { HomeStatus, isNewMsg } from "@/util/axios.js";
 import { formateTime, setItem } from "@/util/util.js";
+
 export default {
   data() {
     return {
-      money: "20000",
-      loanamount: "20000.00",
-      orderStatus: "待签约",
+      money: "",
+      productName: "",
+      auditedAmount: "",
+      unable: "",
+      orderStatus: 0,
+      flowFlag: "",
+      loanamount: "",
       time: new Date(),
       images: [
-        require("../../assets/images/t1.jpg"),
-        require("../../assets/images/t2.jpg"),
-        require("../../assets/images/t3.jpg"),
-        require("../../assets/images/t4.jpg")
+        require("../../assets/images/banner1.png")
+        // require("../../assets/images/t2.jpg"),
+        // require("../../assets/images/t3.jpg"),
+        // require("../../assets/images/t4.jpg")
       ],
-      count: ""
+      status: {
+        提交申请: "0",
+        待绑卡: "1",
+        审核中: "2",
+        待签约: "3",
+        待确认: "8",
+        待放款: "4",
+        待还款: "12",
+        逾期: "14",
+        已结清: "16",
+        审核拒绝: "9",
+        贷款取消: "17"
+      },
+      hasNews: false,
+      orderId: ""
     };
   },
+  filters: {
+    moneyFormat(value) {
+      let money = 0;
+      value ? (money = value.toFixed(2)) : "";
+      return "￥" + money;
+    }
+  },
   mounted() {
-    // this.formateDate();
     this.init();
+    this.isNewMsg();
   },
   methods: {
     init() {
-      this.baseinfo();
       this.getInfo();
     },
     async getInfo() {
       let res = await HomeStatus();
-      if (res.code === "200") {
-        this.orderStatus =
-          res.data.unAble == 3
-            ? "待签约"
-            : res.data.unAble == 4 ? "待还款" : "";
-      }
-    },
-    async baseinfo() {
-      let res = await baseInfo();
-      if (res.code === "200") {
+      console.log(res);
+      if (res.code === 200) {
+        this.orderStatus = res.data.unAble;
         this.money = res.data.priceMax;
+        this.productName = res.data.info.productName;
+        this.auditedAmount = res.data.info.auditedAmount;
+        this.flowFlag = res.data.info.flowFlag;
+        res.data.info.canRepayTime
+          ? (this.time = formateTime(
+              new Date(res.data.info.canRepayTime),
+              "yyyy-MM-dd"
+            ))
+          : "";
+        this.loanamount = res.data.info.periodAmount;
+        this.orderId = res.data.info.orderId;
       }
     },
     apply() {
       this.$router.push({ path: "/index/product" });
     },
-    formateDate() {
-      this.time = formateTime(this.time, "yyyy-MM-dd");
-    },
     toDetail() {
       this.$router.push({ path: "/progress" });
+    },
+    toComplete(flag) {
+      if (flag == 1) {
+        window.location.href = "";
+      } else if (flag == 3) {
+        this.$router.push({
+          path: "/verify",
+          query: { orderId: this.orderId }
+        });
+      }
     },
     //去往个人中心
     personcenter() {
@@ -110,6 +149,12 @@ export default {
     },
     message() {
       this.$router.push({ path: "/index/message" });
+    },
+    async isNewMsg() {
+      let res = await isNewMsg();
+      if (res.code == 200) {
+        this.hasNews = res.data;
+      }
     }
   }
 };
@@ -119,7 +164,8 @@ export default {
 @import "../../assets/style/style.scss";
 .index {
   .van-swipe {
-    height: rem(400px);
+    height: rem(300px);
+    margin-top: -1px;
     img {
       width: 100%;
       height: 100%;
@@ -151,6 +197,10 @@ export default {
   }
   .apply {
     margin-top: rem(40px);
+    button:disabled {
+      background-color: $lightGrey;
+      border-color: $lightGrey;
+    }
   }
   .order-progress {
     font-size: rem(30px);
@@ -167,6 +217,18 @@ export default {
   }
   .arrow {
     padding-top: rem(9px);
+  }
+  .msg {
+    position: relative;
+  }
+  .redmark {
+    width: rem(15px);
+    height: rem(15px);
+    background: #ff0000;
+    border-radius: 50%;
+    display: inline-block;
+    position: absolute;
+    right: rem(1px);
   }
 }
 </style>

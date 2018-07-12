@@ -10,6 +10,6 @@ if (process.env.NODE_ENV === "development") {
 } else if (process.env.NODE_ENV === "production") {
     baseUrl = "http://fsapi.starjrcs.com:8887/";//正式地址
 } else if (process.env.NODE_ENV === "testing") {
-    baseUrl = "http://wuhanxingrong.vicp.io:8890/"; //测试地址
+    baseUrl = "http://wuhanxingrong.vicp.io:28900/"; //测试地址
 }
 export { baseUrl, routerMode, imgBaseUrl, KEY };

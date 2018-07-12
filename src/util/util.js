@@ -163,3 +163,20 @@ export function initMap(address) {
         }
     });
 }
+
+//银行卡号过滤
+export function stringHidePart(strObj) {
+    var strLength = strObj.length;
+    var star = '';
+    var strRel = '';
+    if (strLength > 8) {
+        var hideSec = strObj.substring(3);    //星号部分
+        for (var i = 5; i < hideSec.length; i++) {
+            star += "*";
+        }
+    };
+    strRel = strObj.substring(0, 4) + star + strObj.substr(strObj.length - 4);
+    // strRel=strRel.replace(/\s/g,'').replace(/(.{4})/g,"$1 ");
+
+    return strRel;
+};

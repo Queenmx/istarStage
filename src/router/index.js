@@ -19,7 +19,7 @@ import quesDetail from '@/pages/index/quesDetail'
 import message from '@/pages/index/message'
 
 import certAuth from '@/pages/application/cert_auth'
-import applyInfo from '@/pages/application/apply_info'
+import applyInfo from '@/pages/application/applyInfo'
 import otherInfo from '@/pages/application/other_info'
 import humanRelation from '@/pages/application/human_relation'
 import creditAuth from '@/pages/application/credit_auth'
@@ -105,23 +105,23 @@ const router = new Router({
 
 
         {
-            path: '/application/cert_auth',
+            path: '/application/certAuth',
             component: certAuth
         },
         {
-            path: '/application/apply_info',
+            path: '/application/applyInfo',
             component: applyInfo
         },
         {
-            path: '/application/other_info',
+            path: '/application/otherInfo',
             component: otherInfo
         },
         {
-            path: '/application/human_relation',
+            path: '/application/humanRelation',
             component: humanRelation
         },
         {
-            path: '/application/credit_auth',
+            path: '/application/creditAuth',
             component: creditAuth
         },
         {
@@ -155,14 +155,28 @@ const router = new Router({
 })
 import { getItem, setItem } from "../util/util";
 router.beforeEach((to, from, next) => {
-    if (to.path !== "/login" && !getItem("api_token")) {
-        // this route requires auth, check if logged in
-        // if not, redirect to login page.
+
+    const nextRoute = ['/sign', '/forget', '/setpsd', '/certification', '/login'];
+    if (nextRoute.indexOf(to.path) < 0 && !getItem('api_token')) {
+        console.log("a")
         next({
             path: "/login"
         });
     } else {
         next(); // 确保一定要调用 next()
     }
+
+
+
+    // if (to.path !== "/login"&&to.path !== "/sign" && !getItem("api_token")) {
+    //     // this route requires auth, check if logged in
+    //     // if not, redirect to login page.
+    //     next({
+    //         path: "/login"
+    //     });
+    // } else {
+    //     next(); // 确保一定要调用 next()
+    // }
+
 });
 export { router };

@@ -9,8 +9,8 @@ function fetch(url, params) {
     //这里做加密
     params.params = strEnc(params.params, KEY);
     let allParams = {
-      appKey: "pro-1530002889-d",
-      // appKey: "1",
+      // appKey: "pro-1530002889-d",
+      appKey: "PRO0711-01-m",
       sign: "4a82b4b0724c14550edf7db91e3411e6",
       timestamp: new Date().valueOf(),
       data: params.params
@@ -18,15 +18,16 @@ function fetch(url, params) {
     axios
       .post(baseUrl + url, allParams, {
         headers: {
-          ACCESS_TOKEN: localStorage.getItem("api_token")
+          // ACCESS_TOKEN: localStorage.getItem("api_token"),
+          TOKEN: localStorage.getItem("api_token")
         }
       })
       .then(response => {
         if (response.data.code == 200) {
           if (response.data.data) {
             response.data.data = JSON.parse(strDec(response.data.data, KEY));
+            // console.log(response.data.data)
           }
-          console.log(response.data.data);
         } else if (response.data.code == 403) {
           router.push({ path: "/login" });
         }
@@ -102,4 +103,74 @@ export const VaCodeAndPhone = params => {
 export const getMessageList = params => {
   params = JSON.stringify(params);
   return fetch("other/getMessageList", { params });
+};
+//是否有新消息
+export const isNewMsg = params => {
+  params = JSON.stringify(params);
+  return fetch("other/isNewMsg", { params });
+};
+
+//消息标记为已读
+export const updateIsRead = params => {
+  params = JSON.stringify(params);
+  return fetch("other/updateIsRead", { params });
+};
+// 借款记录
+export const loanRecord = params => {
+  params = JSON.stringify(params);
+  return fetch("/repayment/loan", { params });
+};
+// 订单详情
+export const repaymentDetail = params => {
+  params = JSON.stringify(params);
+  return fetch("/repayment/repaymentDetail", { params });
+};
+//资料列表是否认证
+export const datum = params => {
+  params = JSON.stringify(params);
+  return fetch("proInfo/apply", { params });
+};
+//申请信息认证-返回条件
+export const returnOption = params => {
+  params = JSON.stringify(params);
+  return fetch("basicInfo/returnOption", { params });
+};
+
+//申请信息认证-查询用户填写信息
+export const getByCusId = params => {
+  params = JSON.stringify(params);
+  return fetch("basicInfo/getByCusId", { params });
+};
+
+//申请信息认证-提交填写信息
+export const ApplicationInfo = params => {
+  params = JSON.stringify(params);
+  return fetch("basicInfo/ApplicationInfo", { params });
+};
+
+//申请信息认证-人际关系
+export const relationship = params => {
+  params = JSON.stringify(params);
+  return fetch("contanctInfo/saveContact", { params });
+};
+
+//申请信息认证-人际关系信息获取
+export const getrelation = params => {
+  params = JSON.stringify(params);
+  return fetch("contanctInfo/getByCusId", { params });
+};
+// 试算
+export const calcu = params => {
+  params = JSON.stringify(params);
+  return fetch("proInfo/calcu", { params });
+};
+// 查询产品详细配置信息
+export const proDetail = params => {
+  params = JSON.stringify(params);
+  return fetch("proInfo/config", { params });
+};
+// 推单
+export const orderApply = params => {
+  params = JSON.stringify(params);
+  return fetch("/order/apply", { params });
 };

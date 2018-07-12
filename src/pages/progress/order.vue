@@ -48,35 +48,31 @@
             <div class="plan-complete" v-if="status[flowFlag] == 16 || status[flowFlag] == 12">
                 <van-collapse v-model="activeNames">
                     <van-collapse-item name="1">
-                        <div slot="title">星分期<span class="complete-money inblock">￥{{applyPrice}}元</span></div>     
+                        <div slot="title">{{productName}}<span class="complete-money inblock">￥{{applyPrice}}元</span></div>     
                         <div class="complete-detail van-hairline--bottom">
                             <van-row type="flex" justify="space-between">
-                                <van-col span="10">申请金额</van-col>
+                                <van-col span="10">借款金额</van-col>
                                 <van-col span="10" class="textright">￥{{applyPrice}}</van-col>
                             </van-row>
                             <van-row type="flex" justify="space-between">
                                 <van-col span="10">借款期限</van-col>
-                                <van-col span="10" class="textright">￥{{applyTerm+applyType[termType]}}</van-col>
+                                <van-col span="10" class="textright">{{applyTerm+applyType[termType]}}</van-col>
                             </van-row>
                             <van-row type="flex" justify="space-between">
-                                <van-col span="10">产品利率</van-col>
+                                <van-col span="10">年化率</van-col>
                                 <van-col span="10" class="textright">{{productRate}}%</van-col>
                             </van-row>
                             <van-row type="flex" justify="space-between">
-                                <van-col span="10">还款方式</van-col>
-                                <van-col span="10" class="textright">{{payType}}</van-col>
+                                <van-col span="6">收款银行卡</van-col>
+                                <van-col span="18" class="textright">{{ bankNumber}}</van-col>
                             </van-row>
                             <van-row type="flex" justify="space-between">
-                                <van-col span="10">收款银行卡</van-col>
-                                <van-col span="10" class="textright">{{bankName + bankNumber}}</van-col>
-                            </van-row>
-                            <van-row type="flex" justify="space-between">
-                                <van-col span="10">申请时间</van-col>
+                                <van-col span="10">借款日期</van-col>
                                 <van-col span="10" class="textright">{{applyTime}}</van-col>
                             </van-row>
                             <van-row type="flex" justify="space-between">
-                                <van-col span="10">订单编号</van-col>
-                                <van-col span="10" class="textright">{{orderNum}}</van-col>
+                                <van-col span="5">借款单号</van-col>
+                                <van-col span="19" class="textright">{{orderNum}}</van-col>
                             </van-row>
                         </div>
                         <h4 class="contract-tit">借款合同</h4>
@@ -103,25 +99,25 @@
                                 </label>
                                 <label v-else :for="'plansCheckbox' + i" class="label" :class="item.periodStatus | planStatusStyle" v-text="i + 1">
                                 </label>
-                                <span :class="item.periodStatus | planStatusStyle">{{ item.periodAmount | formatMoney('元') }}</span>
-                                <span class="complete-money inblock">{{item.repayTime}} {{item.periodStatus|planStatus}}</span>
+                                <span :class="item.periodStatus | planStatusStyle">{{ item.noRepayAmount | formatMoney('元') }}</span>
+                                <span class="complete-money inblock">{{item.dueTime|Timeformate}} {{item.periodStatus|planStatus}}</span>
                             </div>
                             <div class="hideinfo">
                                 <van-row type="flex" justify="space-between">
                                     <van-col span="10">本金</van-col>
-                                    <van-col span="10" class="textright">{{item.capitalAmount}}</van-col>
+                                    <van-col span="10" class="textright">{{item.capitalAmount | formatMoney('元')}}</van-col>
                                 </van-row>
                                 <van-row type="flex" justify="space-between">
                                     <van-col span="10">利息</van-col>
-                                    <van-col span="10" class="textright">{{item.interestAmount}}</van-col>
+                                    <van-col span="10" class="textright">{{item.interestAmount| formatMoney('元')}}</van-col>
                                 </van-row>
                                 <van-row type="flex" justify="space-between">
                                     <van-col span="10">逾期</van-col>
-                                    <van-col span="10" class="textright">{{item.overdueAmount}}</van-col>
+                                    <van-col span="10" class="textright">{{item.overdueAmount| formatMoney('元')}}</van-col>
                                 </van-row>
                                 <van-row type="flex" justify="space-between">
                                     <van-col span="10">管理费</van-col>
-                                    <van-col span="10" class="textright">{{item.manageAmount}}</van-col>
+                                    <van-col span="10" class="textright">{{item.manageAmount| formatMoney('元')}}</van-col>
                                 </van-row>
                             </div>
                         </van-collapse-item>
@@ -129,15 +125,13 @@
                 </div>
             </div>
             </div>
-            
+            <split></split> 
             <div class="card" v-if="status[flowFlag] != 16 && status[flowFlag] != 12">
-                <split></split> 
                 <van-cell-group>
                     <van-cell title="申请金额" :value="'￥'+applyPrice" />
                     <van-cell title="借款期限" :value="applyTerm+applyType[termType]" />
                     <van-cell title="产品利率" :value="productRate +'%'" />
-                    <van-cell title="还款方式" :value="payType " />
-                    <van-cell title="收款银行卡" :value="bankName + bankNumber" />
+                    <van-cell title="收款银行卡" :value="bankName + bankNumber" v-if="status[flowFlag] != 1" />
                     <van-cell title="申请时间" :value="applyTime" />
                     <van-cell title="订单编号" :value="orderNum" />
                 </van-cell-group>
@@ -158,10 +152,12 @@
     </div>    
 </template>
 <script>
-//import func from "./vue-temp/vue-editor-bridge";
+import { repaymentDetail } from "@/util/axios.js";
+import { formateTime, stringHidePart } from "@/util/util.js";
 export default {
   data() {
     return {
+      orderId: this.$route.query.orderId,
       selectArr: [],
       applyType: {
         1: "天",
@@ -182,7 +178,8 @@ export default {
       },
       active: 1,
       activeList: "",
-      applyPrice: "46646.00",
+      productName: "",
+      applyPrice: "0.00",
       productType: "H5",
       applyTerm: 465,
       termType: 1,
@@ -193,151 +190,19 @@ export default {
       bankName: "测试",
       bankNumber: "110",
       productRate: 11,
-      flowFlag: "待还款",
-      repaidAmount: "6646.0",
-      noRepayAmount: "40000.0",
-      title: {
-        applyPrice: "申请金额",
-        applyTerm: "申请期限",
-        productRate: "产品利率",
-        payType: "还款方式",
-        bankName: "收款银行",
-        applyTime: "申请时间",
-        orderNum: "订单编号"
-      },
+      flowFlag: "已结清",
+      repaidAmount: "0.00",
+      noRepayAmount: "0.00",
       activeNames: [],
-      contractInfo: [
-        {
-          fieldId: "58211220b6a24191904c11769fc5e108",
-          fieldName: "测试1",
-          fieldValue: "http://www.baidu1.com?orderNo=123456",
-          fieldType: "contract"
-        },
-        {
-          fieldId: "e8c605f69cf0474a8e37646ef8242518",
-          fieldName: "测试2",
-          fieldValue: "www.baidu1.com?orderNo=123456",
-          fieldType: "contract"
-        },
-        {
-          fieldId: "facf7611d1384749b7db380a73973d50",
-          fieldName: "测试3",
-          fieldValue: "www.baidu1.com?orderNo=123456",
-          fieldType: "contract"
-        }
-      ],
-      plans: [
-        {
-          canRepayTime: 3121,
-          capitalAmount: 0,
-          dueTime: 1321,
-          interestAmount: 0,
-          manageAmount: 0,
-          orderId: "1",
-          overdueAmount: 0,
-          payType: 1,
-          periodAmount: 100,
-          periodNo: 12,
-          periodRemark: "测试",
-          periodStatus: 2,
-          planId: "1",
-          repayTime: 12313
-        },
-        {
-          canRepayTime: 3121,
-          capitalAmount: 0,
-          dueTime: 1321,
-          interestAmount: 0,
-          manageAmount: 0,
-          orderId: "1",
-          overdueAmount: 0,
-          payType: 1,
-          periodAmount: 100,
-          periodNo: 12,
-          periodRemark: "测试",
-          periodStatus: 2,
-          planId: "1",
-          repayTime: 12313
-        },
-        {
-          canRepayTime: 3121,
-          capitalAmount: 0,
-          dueTime: 1321,
-          interestAmount: 0,
-          manageAmount: 0,
-          orderId: "1",
-          overdueAmount: 0,
-          payType: 1,
-          periodAmount: 100,
-          periodNo: 12,
-          periodRemark: "测试",
-          periodStatus: 2,
-          planId: "1",
-          repayTime: 12313
-        },
-        {
-          canRepayTime: 3121,
-          capitalAmount: 0,
-          dueTime: 1321,
-          interestAmount: 0,
-          manageAmount: 0,
-          orderId: "1",
-          overdueAmount: 0,
-          payType: 1,
-          periodAmount: 100,
-          periodNo: 12,
-          periodRemark: "测试",
-          periodStatus: 1,
-          planId: "1",
-          repayTime: 12313
-        },
-        {
-          canRepayTime: 3121,
-          capitalAmount: 0,
-          dueTime: 1321,
-          interestAmount: 0,
-          manageAmount: 0,
-          orderId: "1",
-          overdueAmount: 0,
-          payType: 1,
-          periodAmount: 100,
-          periodNo: 12,
-          periodRemark: "测试",
-          periodStatus: 0,
-          planId: "1",
-          repayTime: 12313
-        },
-        {
-          canRepayTime: 3121,
-          capitalAmount: 0,
-          dueTime: 1321,
-          interestAmount: 0,
-          manageAmount: 0,
-          orderId: "1",
-          overdueAmount: 0,
-          payType: 1,
-          periodAmount: 100,
-          periodNo: 12,
-          periodRemark: "测试",
-          periodStatus: 0,
-          planId: "1",
-          repayTime: 12313
-        }
-      ]
+      contractInfo: [],
+      plans: []
     };
   },
   computed: {
     plansTotal() {
       let total = 0;
       for (let i = 0; i < this.selectArr.length; i++) {
-        if (this.selectArr[i]) {
-          total += this.plans[i].periodAmount;
-          for (let y = 0; y < i; y++) {
-            if (this.plans[y].periodStatus != 2) {
-              this.$set(this.selectArr, y, true);
-            }
-          }
-        }
+        total += this.plans[this.selectArr[i]].noRepayAmount;
       }
       this.plans.forEach(item => {
         if (item.periodStatus == 1) {
@@ -349,30 +214,21 @@ export default {
   },
   filters: {
     planStatus: function(status) {
-      //返回当前还款状态
       return status === 0 ? "未还" : status === 1 ? "进行中" : "已还款";
     },
     planStatusStyle: function(status) {
-      //返回当前还款状态样式
       return status !== 2 ? "failed" : "success";
+    },
+    Timeformate(val) {
+      let date = new Date(val * 1000);
+      return val ? formateTime(date, "yyyy-MM-dd") : "----/--/--";
     },
     formatMoney: function(value, fmt) {
       return "￥" + value.toFixed(2) + fmt;
     }
-    // planStatistics: function(periodStatus, data) {
-    //   //统计已还与未还款数
-    //   let total = 0;
-    //   for (let i = 0; i < data.length; i++) {
-    //     periodStatus === 0
-    //       ? data[i].periodStatus === 2 ? (total += data[i].periodAmount) : 0
-    //       : data[i].periodStatus !== 2 ? (total += data[i].periodAmount) : 0;
-    //   }
-
-    //   return total;
-    // }
   },
   mounted: function() {
-    this.getInitIndex();
+    this.init();
   },
   methods: {
     activeValue(flag) {
@@ -395,7 +251,6 @@ export default {
       this.$toast("点击按钮");
     },
     checked(maxIndex, e) {
-      //选中操作
       let minIndex = this.getMinIndex();
       let checkbox = document.getElementById("checkboxAll");
       this.select(minIndex, maxIndex, e);
@@ -407,14 +262,12 @@ export default {
       }
     },
     select(minIndex, maxIndex, e) {
-      //记录选择记录
       this.selectArr = [];
       for (let i = minIndex; i <= maxIndex; i++) {
         this.selectArr.push(i);
       }
     },
     checkboxAll(e) {
-      //全选
       !e.target.control.checked
         ? this.checked(this.plans.length - 1, e)
         : this.getInitIndex();
@@ -431,7 +284,6 @@ export default {
       }
     },
     checkboxAllStatus(index) {
-      //全选按钮状态
       let result = this.plans.filter(function(item) {
         return item.periodStatus !== 2;
       });
@@ -439,6 +291,38 @@ export default {
       result.length == this.selectArr.length
         ? (checkbox.checked = true)
         : (checkbox.checked = false);
+    },
+    async init() {
+      let data = {
+        orderId: this.orderId
+      };
+      let res = await repaymentDetail(data);
+      console.log(res);
+      if (res.code == 200) {
+        this.flowFlag = res.data.repayOrderDetail.flowFlag;
+        this.productName = res.data.repayOrderDetail.productName;
+        this.applyPrice = res.data.repayOrderDetail.auditedAmount.toFixed(2);
+        this.productType = res.data.repayOrderDetail.productType;
+        this.applyTerm = res.data.repayOrderDetail.applyTerm;
+        this.termType = res.data.repayOrderDetail.termType;
+        this.channelNum = res.data.repayOrderDetail.channelNum;
+        this.payType = res.data.repayOrderDetail.payType;
+        this.applyTime = formateTime(
+          new Date(res.data.repayOrderDetail.applyTime * 1000),
+          "yyyy-MM-dd"
+        );
+        this.orderNum = res.data.repayOrderDetail.orderNum;
+        this.bankName = res.data.repayOrderDetail.bankName;
+        let bankNum = res.data.repayOrderDetail.bankNumber;
+        bankNum ? (this.bankNumber = stringHidePart(bankNum)) : "----";
+        this.plans = res.data.plans;
+        this.contractInfo = res.data.contractInfo;
+        let repaidmoney = res.data.repayOrderDetail.repaidAmount;
+        repaidmoney ? (this.repaidAmount = repaidmoney.toFixed(2)) : "0.00";
+        let mopaidmoney = res.data.repayOrderDetail.noRepaidAmount;
+        mopaidmoney ? (this.noRepayAmount = mopaidmoney.toFixed(2)) : "0.00";
+        this.getInitIndex();
+      }
     }
   }
 };
@@ -580,7 +464,10 @@ export default {
     color: #686868;
   }
   .footer {
-    // height: rem(100px);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     font-size: rem(30px);
     line-height: rem(100px);
     background: #fff;
