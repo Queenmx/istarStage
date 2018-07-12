@@ -29,6 +29,7 @@ function fetch(url, params) {
               response.data.data = JSON.parse(strDec(response.data.data, KEY));
             } catch (e) {
               response.data.data = strDec(response.data.data, KEY);
+              //   console.log("000");
             }
             // response.data.data = JSON.parse(strDec(response.data.data, KEY));
             // console.log(response.data.data)
