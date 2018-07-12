@@ -5,11 +5,13 @@
             <div class="card">
                 <van-row type="flex" justify="space-between" class="idcard">
                     <van-col span="10" class="textcenter">
-                        <img src="../../assets/images/camera.png" />
+                        <van-uploader :after-read="onRead">
+                            <img src="../../assets/images/camera.png" />
+                        </van-uploader>
                         <span class="inblock">身份证照（人像面）</span>
                     </van-col>
                     <van-col span="10" class="textcenter">
-                        <img src="../../assets/images/home.png" />
+                            <img src="../../assets/images/home.png" />
                         <span class="inblock">照片示范</span>
                     </van-col>
                 </van-row>
@@ -21,7 +23,9 @@
                 </van-cell-group>
                 <van-row type="flex" justify="space-between" class="idcard backimg">
                     <van-col span="10" class="textcenter">
-                        <img src="../../assets/images/camera.png" />
+                        <van-uploader :after-read="onRead">
+                            <img src="../../assets/images/camera.png" />
+                        </van-uploader>
                         <span class="inblock">身份证照（国徽面）</span>
                     </van-col>
                     <van-col span="10" class="textcenter">
@@ -62,7 +66,9 @@ export default {
       idCard: "",
       idCardnum: "",
       imgFile: "",
-      msg: ""
+      msg: "",
+      imgID1: "",
+      imgID2: ""
     };
   },
   methods: {

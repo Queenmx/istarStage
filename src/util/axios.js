@@ -25,7 +25,12 @@ function fetch(url, params) {
       .then(response => {
         if (response.data.code == 200) {
           if (response.data.data) {
-            response.data.data = JSON.parse(strDec(response.data.data, KEY));
+            try {
+              response.data.data = JSON.parse(strDec(response.data.data, KEY));
+            } catch (e) {
+              response.data.data = strDec(response.data.data, KEY);
+            }
+            // response.data.data = JSON.parse(strDec(response.data.data, KEY));
             // console.log(response.data.data)
           }
         } else if (response.data.code == 403) {
@@ -173,4 +178,9 @@ export const proDetail = params => {
 export const orderApply = params => {
   params = JSON.stringify(params);
   return fetch("/order/apply", { params });
+};
+// 获取认证url接口
+export const getAuthUrl = params => {
+  params = JSON.stringify(params);
+  return fetch("/infoAuth/collect", { params });
 };

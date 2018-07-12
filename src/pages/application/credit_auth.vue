@@ -7,7 +7,7 @@
             <h3 class="cardtitle van-hairline--bottom wrap"><span>基础认证</span></h3>
             <ul class="wrap card">
                 <li class="credit" v-for="(item,index) in baseAuth" :key="index">
-                    <div @click="bindEvent(item.fieldName)">
+                    <div @click="bindEvent(item.fieldName,item.fieldValue)">
                         <img :src="require('../../assets/images/'+item.fieldName+'.png')" />
                         <span>{{credit[item.fieldName]}}</span>
                     </div>
@@ -17,7 +17,7 @@
             <h3 class="cardtitle van-hairline--bottom wrap"><span>更多认证</span></h3>
             <ul class="wrap card">
                 <li class="credit" v-for="(item,index) in moreAuth" :key="index">
-                    <div @click="bindEvent(item.fieldName)">
+                    <div @click="bindEvent(item.fieldName,item.fieldValue)">
                         <img :src="require('../../assets/images/'+item.fieldName+'.png')" />
                         <span>{{credit[item.fieldName]}}</span>
                     </div>
@@ -28,7 +28,7 @@
     </div>
 </template>
 <script>
-import { proDetail } from "@/util/axios.js";
+import { proDetail, getAuthUrl } from "@/util/axios.js";
 export default {
   data() {
     return {
@@ -55,26 +55,17 @@ export default {
     bindLink(url) {
       this.$router.push({ path: url });
     },
-    bindEvent(flag) {
-      console.log(flag);
-      if (flag === "credit_phone") {
-        this.bindLink("/application/1");
-      } else if (flag === "credit_card") {
-        this.bindLink("/application/2");
-      } else if (flag === "credit_bank") {
-        this.bindLink("/application/3");
-      } else if (flag === "credit_jd") {
-        this.bindLink("/application/4");
-      } else if (flag === "credit_taobao") {
-        this.bindLink("/application/5");
-      } else if (flag === "credit_weixin") {
-        this.bindLink("/application/6");
-      } else if (flag === "credit_fund") {
-        this.bindLink("/application/7");
-      } else if (flag === "credit_zmxy") {
-        this.bindLink("/application/8");
-      } else if (flag === "credit_asset") {
-        this.bindLink("/application/assetsPage");
+    async bindEvent(flag, authType) {
+      let data = {
+        type: flag,
+        authType: authType
+      };
+      console.log(data);
+      let res = await getAuthUrl(data);
+      if (res.code === 200) {
+        location.href = res.data;
+      } else {
+        this.$toast(res.msg);
       }
     },
     async init() {
