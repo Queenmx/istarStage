@@ -51,7 +51,7 @@
                         <span class="inblock">活体校验</span>
                     </van-col>
                     <van-col span="10" class="textcenter">
-                        <img src="../../assets/images/exm.png" />
+                        <img src="../../assets/images/exm.png" ref="videoImg" class="uploadMedia"/>
                         <span class="inblock">视频截取</span>
                     </van-col>
                 </van-row>
@@ -120,6 +120,11 @@ export default {
         tokenRandomNumber: this.tokenRandomNumber
       };
       let res = await certAuthVideo();
+      if (res.code === 200) {
+        this.$refs.videoImg.src = res.data;
+      } else {
+        this.$toast(res.msg);
+      }
     },
     async getRandomNumber() {
       let res = await certAuthRandom();
