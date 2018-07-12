@@ -43,6 +43,45 @@ function fetch(url, params) {
             });
     });
 }
+function fetch1(url, params) {
+    return new Promise((resolve, reject) => {
+        //这里做加密
+        // params.params = strEnc(params.params, KEY);
+        let allParams = {
+            // appKey: "pro-1530002889-d",
+            appKey: "PRO0711-01-m",
+            sign: "4a82b4b0724c14550edf7db91e3411e6",
+            timestamp: new Date().valueOf(),
+            data: params.params
+        };
+        axios
+            .post(baseUrl + url, allParams, {
+                headers: {
+                    // ACCESS_TOKEN: localStorage.getItem("api_token"),
+                    TOKEN: localStorage.getItem("api_token")
+                }
+            })
+            .then(response => {
+                if (response.data.code == 200) {
+                    if (response.data.data) {
+                        try {
+                            response.data.data = JSON.parse(strDec(response.data.data, KEY));
+                        } catch (e) {
+                            response.data.data = strDec(response.data.data, KEY);
+                        }
+                        // response.data.data = JSON.parse(strDec(response.data.data, KEY));
+                        // console.log(response.data.data)
+                    }
+                } else if (response.data.code == 403) {
+                    router.push({ path: "/login" });
+                }
+                resolve(response.data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
 //账号登录
 export const getUser = params => {
     params = JSON.stringify(params);
@@ -199,3 +238,13 @@ export const confirmMoney = params => {
     params = JSON.stringify(params);
     return fetch("order/confirmMoney", { params })
 }
+// 活体认证--上传用户视频
+export const certAuthVideo = params => {
+    params = JSON.stringify(params);
+    return fetch1("identity/lite/video", { params });
+};
+// 活体认证--获取朗读数字
+export const certAuthRandom = params => {
+    params = JSON.stringify(params);
+    return fetch("identity/lite/random", { params });
+};
