@@ -3,7 +3,7 @@
         <v-header title="申请结果"></v-header>
         <div class="container">
             <img src="../assets/images/success.png" />
-            <span class="hint">您的借款申请已经提交，请耐心等候！</span>
+            <span class="hint">操作成功！</span>
         </div>
         <router-link class="btnBox" to="/">
             <van-button size="large" type="primary">返回首页</van-button>
@@ -13,9 +13,18 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      type: this.$route.query.type
+    };
   },
-  methods: {}
+  mounted() {
+    this.init();
+  },
+  methods: {
+    init() {
+      console.log(this.type);
+    }
+  }
 };
 </script>
 <style lang="scss">

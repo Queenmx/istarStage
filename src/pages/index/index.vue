@@ -20,29 +20,29 @@
                     <span class="money">{{money?money:"00"}}</span>
                     <p class="tips">借1000，每天利息低至1元，具体以显示为准</p>
                     <div class="apply">
-                        <van-button size="large" type="primary" :disabled="orderStatus!= 0" @click="apply">立即申请</van-button>
+                        <van-button size="large" type="primary" :disabled="orderStatus!= 0" @click="apply">{{orderStatus== 0 ?'立即申请':  '申请中'}}</van-button>
                     </div>
                 </div>
                 <div v-if="orderStatus == 2" @click="toComplete(status[flowFlag])">
-                <split></split>
-                <van-row class="order-progress whitebg" type="flex" justify="space-between">
-                    <van-col class="pro-name" span="10">
-                        <h2>{{productName?productName :'----'}}</h2>
-                        <span>{{auditedAmount | moneyFormat}}</span>
-                    </van-col>
-                    <van-col class="orderstatus textright" span="10">{{flowFlag}}</van-col>
-                </van-row>
+                    <split></split>
+                    <van-row class="order-progress whitebg" type="flex" justify="space-between">
+                        <van-col class="pro-name" span="10">
+                            <h2>{{productName?productName :'----'}}</h2>
+                            <span>{{auditedAmount | moneyFormat}}</span>
+                        </van-col>
+                        <van-col class="orderstatus textright" span="10">{{flowFlag}}</van-col>
+                    </van-row>
                 </div>
-                <router-link to="/progress/order" v-if="orderStatus== 3">
-                <split></split>
-                <van-row class="order-progress whitebg" type="flex" justify="space-between" @click="toDetail">
-                    <van-col class="pro-name" span="18">
-                        <h2>还款计划</h2>
-                        <span>{{time}} | 应还金额 {{loanamount}}</span>
-                    </van-col>
-                    <van-col class="orderstatus textright" span="6">{{flowFlag}}</van-col>
-                </van-row>
-                </router-link>
+                <div v-if="orderStatus== 3" @click="reCode">
+                    <split></split>
+                    <van-row class="order-progress whitebg" type="flex" justify="space-between" @click="toDetail">
+                        <van-col class="pro-name" span="18">
+                            <h2>还款计划</h2>
+                            <span>{{time}} | 应还金额 {{loanamount}}</span>
+                        </van-col>
+                        <van-col class="orderstatus textright" span="6">{{flowFlag}}</van-col>
+                    </van-row>
+                </div>
                 <router-link to="/progress/record">
                 <split></split>
                     <van-row class="order-progress whitebg" type="flex" justify="space-between">
@@ -56,9 +56,9 @@
     </div>
 </template>
 <script>
-import { HomeStatus, isNewMsg } from "@/util/axios.js";
+import { HomeStatus, isNewMsg, getUrl } from "@/util/axios.js";
 import { formateTime, setItem } from "@/util/util.js";
-
+let Base64 = require("js-base64").Base64;
 export default {
   data() {
     return {
@@ -66,8 +66,8 @@ export default {
       productName: "",
       auditedAmount: "",
       unable: "",
-      orderStatus: 0,
-      flowFlag: "",
+      orderStatus: 3,
+      flowFlag: "待签约",
       loanamount: "",
       time: new Date(),
       images: [
@@ -90,7 +90,8 @@ export default {
         贷款取消: "17"
       },
       hasNews: false,
-      orderId: ""
+      orderId: "",
+      orderNum: ""
     };
   },
   filters: {
@@ -125,6 +126,7 @@ export default {
           : "";
         this.loanamount = res.data.info.periodAmount;
         this.orderId = res.data.info.orderId;
+        this.orderNum = res.data.info.orderNum;
       }
     },
     apply() {
@@ -134,14 +136,34 @@ export default {
       this.$router.push({ path: "/progress" });
     },
     toComplete(flag) {
+      console.log(flag);
+      let url = "http://h5.xinyzx.com:82/istarStage/#/success";
       if (flag == 1) {
-        window.location.href = "";
+        this.toPath(1, url + "?type=1");
       } else if (flag == 3) {
-        this.$router.push({
-          path: "/verify",
-          query: { orderId: this.orderId }
-        });
+        this.toPath(2, url + "?type=2");
       }
+    },
+    async toPath(type, url) {
+      let data = {
+        orderNum: this.orderNum,
+        type: type,
+        returnUrl: url
+      };
+      console.log(data);
+      let res = await getUrl(data);
+      console.log(res);
+      if (res.code == 200) {
+        location.href = res.data;
+      }
+    },
+    reCode() {
+      this.$router.push({
+        path: "/progress/order",
+        query: {
+          orderId: this.orderId
+        }
+      });
     },
     //去往个人中心
     personcenter() {

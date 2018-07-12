@@ -64,7 +64,7 @@ export default {
       let res = await getAuthUrl(data);
       if (res.code === 200) {
         console.log(res);
-        location.href = res.data;
+        // location.href = res.data;
       } else {
         this.$toast(res.msg);
       }

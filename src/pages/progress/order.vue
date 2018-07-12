@@ -7,13 +7,12 @@
                 <van-row type="flex" justify='space-between'>
                     <van-col span="10" class="status-words">{{flowFlag}}</van-col>
                     <van-col class="textright status-btn" span="10">
-                        <van-button v-if="status[flowFlag] == 1">绑卡</van-button>
-                        <van-button v-else-if="status[flowFlag] == 3">签约</van-button>
-                        <van-button v-else-if="status[flowFlag] == 8">确认用款</van-button>
+                        <van-button v-if="status[flowFlag] == 1 || status[flowFlag] == 3" @click="bindCard(status[flowFlag])">{{status[flowFlag] == 1 ? '绑卡': '签约'}}</van-button>
                         <img v-else-if="status[flowFlag] == 4||status[flowFlag] == 2" class="clock" src="../../assets/images/clock.png">
                         <img v-else-if="status[flowFlag] == 17 || status[flowFlag] == 9" class="clock" src="../../assets/images/warn.png">
                         <img v-else-if="status[flowFlag] == 16" class="clock" src="../../assets/images/gou.png">
                         <img v-else-if="status[flowFlag] == 12" class="clock" src="../../assets/images/payment.png">
+                        <img v-else class="clock" src="../../assets/images/clock.png">
                     </van-col>
                 </van-row>
             </div>
@@ -131,7 +130,7 @@
                     <van-cell title="申请金额" :value="'￥'+applyPrice" />
                     <van-cell title="借款期限" :value="applyTerm+applyType[termType]" />
                     <van-cell title="产品利率" :value="productRate +'%'" />
-                    <van-cell title="收款银行卡" :value="bankName + bankNumber" v-if="status[flowFlag] != 1" />
+                    <van-cell title="收款银行卡" :value="bankNumber" v-if="status[flowFlag] != 1" />
                     <van-cell title="申请时间" :value="applyTime" />
                     <van-cell title="订单编号" :value="orderNum" />
                 </van-cell-group>
@@ -152,8 +151,9 @@
     </div>    
 </template>
 <script>
-import { repaymentDetail } from "@/util/axios.js";
+import { repaymentDetail, getUrl } from "@/util/axios.js";
 import { formateTime, stringHidePart } from "@/util/util.js";
+let Base64 = require("js-base64").Base64;
 export default {
   data() {
     return {
@@ -322,6 +322,24 @@ export default {
         let mopaidmoney = res.data.repayOrderDetail.noRepaidAmount;
         mopaidmoney ? (this.noRepayAmount = mopaidmoney.toFixed(2)) : "0.00";
         this.getInitIndex();
+      }
+    },
+    async bindCard(type) {
+      let url = "http://h5.xinyzx.com:82/istarStage/#/success";
+      let data = {
+        orderNum: this.orderNum,
+        type: type,
+        returnUrl: "http://h5.xinyzx.com:82/istarStage/#/progress/record"
+      };
+      if (type == 1) {
+        data.returnUrl = url + "?type=1";
+      } else {
+        data.type = 2;
+        data.returnUrl = url + "?type=2";
+      }
+      let res = await getUrl(data);
+      if (res.code == 200) {
+        location.href = res.data;
       }
     }
   }

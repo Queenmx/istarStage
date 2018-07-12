@@ -5,8 +5,8 @@
             <div class="vertify-money wrap">
                 <van-row type="flex" justify="space-between" class="vertify-tit">
                     <van-col span="18">审核后可借款金额（元）</van-col>
-                    <van-col class="textright" span="6">
-                        <van-icon name="question" @click="show=!show"/>
+                    <van-col class="textright" span="6" @click="show=!show">
+                        <van-icon name="question" />
                     </van-col>
                 </van-row>
                 <van-dialog v-model="show" title="利息和费用组成">
@@ -37,15 +37,46 @@
     </div>
 </template>
 <script>
+import { confirmMoney, getUrl } from "@/util/axios.js";
 export default {
   data() {
     return {
-      show: false
+      show: false,
+      orderId: this.$route.query.orderId,
+      orderNum: this.$route.query.orderNum,
+      auditedAmount: "",
+      consultAmount: ""
     };
   },
+  mounted() {
+    this.init();
+  },
   methods: {
-    toSign() {
-      this.$router.push({ path: "/" });
+    async init() {
+      let data = {
+        orderId: this.orderId
+      };
+      let res = await confirmMoney(data);
+      console.log(res);
+      if (res.code == 200) {
+      } else {
+        this.$toast(res.msg);
+      }
+    },
+    async toSign() {
+      let data = {
+        orderNum: this.orderNum,
+        type: 2,
+        returnUrl: "http://h5.xinyzx.com:82/istarStage/#/success?type=1"
+      };
+      console.log(data);
+      let res = await getUrl(data);
+      console.log(res);
+      if (res.code == 200) {
+        location.href = res.data;
+      } else {
+        this.$toast(res.msg);
+      }
     }
   }
 };
