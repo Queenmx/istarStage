@@ -23,14 +23,16 @@
                         <van-button size="large" type="primary" :disabled="orderStatus!= 0" @click="apply">立即申请</van-button>
                     </div>
                 </div>
-                <van-row class="order-progress whitebg" type="flex" justify="space-between" v-if="orderStatus ==2" @click="toComplete(status[flowFlag])">
-                    <split></split>
+                <div v-if="orderStatus == 2" @click="toComplete(status[flowFlag])">
+                <split></split>
+                <van-row class="order-progress whitebg" type="flex" justify="space-between">
                     <van-col class="pro-name" span="10">
                         <h2>{{productName?productName :'----'}}</h2>
                         <span>{{auditedAmount | moneyFormat}}</span>
                     </van-col>
                     <van-col class="orderstatus textright" span="10">{{flowFlag}}</van-col>
                 </van-row>
+                </div>
                 <router-link to="/progress/order" v-if="orderStatus== 3">
                 <split></split>
                 <van-row class="order-progress whitebg" type="flex" justify="space-between" @click="toDetail">
@@ -41,8 +43,8 @@
                     <van-col class="orderstatus textright" span="6">{{flowFlag}}</van-col>
                 </van-row>
                 </router-link>
-                <split></split>
                 <router-link to="/progress/record">
+                <split></split>
                     <van-row class="order-progress whitebg" type="flex" justify="space-between">
                         <van-col class="progress-name" span="10">借款记录</van-col>
                         <van-col class="textright arrow" span="10"><van-icon name="arrow"/></van-col>
@@ -110,7 +112,7 @@ export default {
       let res = await HomeStatus();
       console.log(res);
       if (res.code === 200) {
-        // this.orderStatus = res.data.unAble;
+        this.orderStatus = res.data.unAble;
         this.money = res.data.priceMax;
         this.productName = res.data.info.productName;
         this.auditedAmount = res.data.info.auditedAmount;
@@ -133,10 +135,7 @@ export default {
     },
     toComplete(flag) {
       if (flag == 1) {
-        this.$router.push({
-          path: "/",
-          query: {}
-        });
+        window.location.href = "";
       } else if (flag == 3) {
         this.$router.push({
           path: "/verify",

@@ -66,7 +66,7 @@ export default {
     },
     //发送验证码
     settime() {
-      if (!/^1(3|4|5|7|8)\d{9}$/.test(this.phone)) {
+      if (!/^1(3|4|5|6|7|8)\d{9}$/.test(this.phone)) {
         this.$toast("请输入正确的手机号码");
         return false;
       }
@@ -91,7 +91,7 @@ export default {
     },
     login() {
       if (this.phone) {
-        if (!/^1(3|4|5|7|8)\d{9}$/.test(this.phone)) {
+        if (!/^1(3|4|5|6|7|8)\d{9}$/.test(this.phone)) {
           this.$toast("请输入正确的手机号码");
           return false;
         }
@@ -129,16 +129,16 @@ export default {
         cusPassword: this.psd
       };
       let res = await getUser(data);
-      if(res.code==200){        
-        setItem("api_token",res.data.token);
-        setItem('userInfo',data)
-        if(res.data.isRealName){
-          this.$router.push({ path: "/"});         
-        }else{
+      if (res.code == 200) {
+        setItem("api_token", res.data.token);
+        setItem("userInfo", data);
+        if (res.data.isRealName) {
+          this.$router.push({ path: "/" });
+        } else {
           this.$router.push({
-             path: "/certification",
-             query:{login:'1'}
-          }); 
+            path: "/certification",
+            query: { login: "1" }
+          });
         }
       } else {
         this.$toast(res.msg);
@@ -151,17 +151,16 @@ export default {
         cusCode: this.sms
       };
       let res = await loginByCode(data);
-      if(res.code==200){        
-        setItem("api_token",res.data.token);
-        setItem('userInfo',data);
-        if(res.data.isRealName){
-          this.$router.push({ path: "/"});          
-        }else{
-          this.$router.push({ 
+      if (res.code == 200) {
+        setItem("api_token", res.data.token);
+        setItem("userInfo", data);
+        if (res.data.isRealName) {
+          this.$router.push({ path: "/" });
+        } else {
+          this.$router.push({
             path: "/certification",
-            query:{login:'1'}
-          }); 
-
+            query: { login: "1" }
+          });
         }
       } else {
         this.$toast(res.msg);

@@ -9,7 +9,7 @@
                             <h4>借款金额</h4>
                             <div class="flex">
                                 <van-cell-group>
-                                    <van-field v-model="value"  placeholder="2000元" @click="isShowMoney=!isShowMoney" icon="edit" @click-icon="isShowMoney=!isShowMoney" />
+                                    <van-field v-model="price"  :placeholder="priceMax +'元'" @click="isShowMoney=!isShowMoney" icon="edit" @click-icon="isShowMoney=!isShowMoney" />
                                 </van-cell-group>
                             </div>
                             <van-popup v-model="isShowMoney" @change="onChange" position="bottom">
@@ -20,7 +20,7 @@
                             <h4>借款期限</h4>
                             <div class="flex">
                                 <van-cell-group>
-                                    <van-field class="limit" v-model="dealine" placeholder="6月" @click="isShowTime=!isShowTime" icon="edit" @click-icon="isShowTime=!isShowTime" />
+                                    <van-field class="limit" v-model="dealine" :placeholder="defultTime+type" @click="isShowTime=!isShowTime" icon="edit" @click-icon="isShowTime=!isShowTime" />
                                 </van-cell-group>
                             </div>
                             <van-popup v-model="isShowTime" @change="onChange" position="bottom">
@@ -31,33 +31,33 @@
                     <van-row class="feecount" gutter="15">
                         <van-col span="8">
                             <span>还款金额</span>
-                            <span class="fee-num inblock">{{currentmoney}}</span>
+                            <span class="fee-num inblock">{{repayAmount}}元</span>
                         </van-col>
                         <van-col span="8" class="center">
                             <span>利息和费用</span>
-                            <van-field v-model="interest" icon="question" @click-icon="show=!show" />
+                            <van-field v-model="totleAmount" icon="question" @click-icon="show=!show" />
                         </van-col>
                         <van-col span="8" class="textright">
                             <span>到账金额</span>
-                            <span class="fee-num inblock">{{currentmoney}}</span>
+                            <span class="fee-num inblock">{{actualAmount}}元</span>
                         </van-col>
                         <van-dialog v-model="show" title="利息和费用组成">
                             <div class="fee-diaLog">
                                 <van-row type="flex" justify="space-between">
                                     <van-col span="10">咨询服务费</van-col>
-                                    <van-col class="textright" span="10">1350元</van-col>
+                                    <van-col class="textright" span="10">{{serviceAmount}}元</van-col>
                                 </van-row>
                                 <van-row type="flex" justify="space-between">
                                     <van-col span="10">利息</van-col>
-                                    <van-col class="textright" span="10">2025元</van-col>
+                                    <van-col class="textright" span="10">{{interestAmount}}元</van-col>
                                 </van-row>
                                 <van-row type="flex" justify="space-between">
                                     <van-col span="10">管理费</van-col>
-                                    <van-col class="textright" span="10">2025元</van-col>
+                                    <van-col class="textright" span="10">{{manageAmount}}元</van-col>
                                 </van-row>
                                 <van-row type="flex" justify="space-between">
                                     <van-col span="10">总共</van-col>
-                                    <van-col class="textright" span="10">5400元</van-col>
+                                    <van-col class="textright" span="10">{{totleAmount}}元</van-col>
                                 </van-row>
                             </div>
                         </van-dialog>
@@ -67,19 +67,18 @@
                 <split></split>
                 <div class="application card">
                     <h3 class="cardtitle van-hairline--bottom"><span>申请材料</span></h3>
-                    <van-row type="flex" class="material-list van-hairline--bottom" justify="space-between" v-for="(item,index) in material" :key="index" >
-                        <van-cell @click="toDetail(item.name)" :title="urlName[item.name]" :class="item.status==1?'green':'blue'" is-link :value="item.status==1?'已认证':'去认证'" />
+                    <van-row type="flex" class="material-list van-hairline--bottom" justify="space-between" v-for="(item,index) in material" :key="index" ref="list">
+                        <van-cell @click="toDetail(index)" :title="urlName[index]" :class="item==1?'green':'blue'" is-link :value="item==1?'已认证': item==2?'重新认证':'去认证'" v-if="item != -1" />
                     </van-row>
                 </div>
                 <split></split>
-                <van-button type="primary" bottom-action>立即借款</van-button>
+                <van-button type="primary" bottom-action @click="applyBtn">立即借款</van-button>
             </div>
         </div>
     </div>
 </template>
 <script>
-import { datum } from "@/util/axios.js";
-
+import { baseInfo, datum, calcu, orderApply } from "@/util/axios.js";
 export default {
   data() {
     return {
@@ -87,40 +86,87 @@ export default {
       deadline: ["6", "12"],
       isShowMoney: false,
       isShowTime: false,
-      value: "",
+      price: "",
       dealine: "",
-      type: "月",
-      currentmoney: "25000.00元",
-      interest: "5000.00元",
+      defultTime: "",
+      priceMax: "",
+      termType: {
+        1: "天",
+        2: "月"
+      },
+      type: "",
+      repayAmount: "0.00",
+      actualAmount: "0.00",
+      totleAmount: "0.00",
+      serviceAmount: "0.00",
+      interestAmount: "0.00",
+      manageAmount: "0.00",
       show: false,
       urlName: {
-        cert_auth: "身份认证",
-        apply_info: "申请信息",
-        other_info: "其他信息",
-        human_relation: "人际关系",
-        credit_auth: "信用认证"
+        certAuth: "身份认证",
+        applyInfo: "申请信息",
+        otherInfo: "其他信息",
+        humanRelation: "人际关系",
+        creditAuth: "信用认证"
       },
-      material: [
-        { name: "cert_auth", status: "1" },
-        { name: "apply_info", status: "1" },
-        { name: "other_info", status: "0" },
-        { name: "human_relation", status: "1" },
-        { name: "credit_auth", status: "0" }
-      ]
+      material: {},
+      productId: "",
+      disabled: false
     };
   },
   mounted() {
     // this.isApprove();
   },
   methods: {
-    async isApprove(){
-      let res=await datum();
-      if(res.code==200){
-        this.material=res.data;
+    async isApprove() {
+      let res = await datum();
+      console.log(res);
+      if (res.code == 200) {
+        // this.material = res.data.infoList;
+        let priceMin = res.data.proInfo.priceMin;
+        this.priceMax = res.data.proInfo.priceMax;
+        let priceIncrement = res.data.proInfo.priceIncrement;
+        let arr = [];
+        for (var i = priceMin; i <= this.priceMax; i = i + priceIncrement) {
+          arr.push(i);
+        }
+        this.columns = arr;
+        this.deadline = res.data.proInfo.productTerm.split(",");
+        this.defultTime = this.deadline[this.deadline.length - 1];
+        let typeValue = res.data.proInfo.termType;
+        this.type = this.termType[typeValue];
+        this.productId = res.data.proInfo.productId;
+
+        let defultData = {
+          price: this.priceMax.toString(),
+          term: this.defultTime,
+          type: this.type === "天" ? 1 : 2
+        };
+        this.counter(defultData);
+      }
+    },
+    async counter(data) {
+      let res = await calcu(data);
+      console.log(res);
+      if (res.code == 200) {
+        this.actualAmount = res.data.actual_amount.toFixed(2);
+        this.interestAmount = res.data.interest_amount.toFixed(2);
+        this.manageAmount = res.data.manage_amount.toFixed(2);
+        this.repayAmount = res.data.repay_amount.toFixed(2);
+        this.serviceAmount = res.data.service_amount.toFixed(2);
+        this.totleAmount = res.data.totle_amount.toFixed(2) + "元";
       }
     },
     onConfirm(value, index) {
-      this.value = value + "元";
+      this.price = value + "元";
+      let data = {
+        price: value.toString(),
+        term: this.dealine
+          ? this.dealine.replace(/[^0-9]/gi, "").toString()
+          : this.defultTime,
+        type: this.type === "天" ? 1 : 2
+      };
+      this.counter(data);
       this.isShowMoney = false;
     },
     onCancel() {
@@ -132,6 +178,14 @@ export default {
     },
     setTime(value, index) {
       this.dealine = value + this.type;
+      let data = {
+        price: this.price
+          ? this.price.replace(/[^0-9]/gi, "").toString()
+          : this.priceMax.toString(),
+        term: value.toString(),
+        type: this.type === "天" ? 1 : 2
+      };
+      this.counter(data);
       this.isShowTime = false;
     },
     DiaLog(action, done) {
@@ -142,7 +196,35 @@ export default {
       }
     },
     toDetail(url) {
-      this.$router.push({ path: "/application/" + url });
+      if (url == "creditAuth" || url == "otherInfo") {
+        this.$router.push({
+          path: "/application/" + url,
+          query: { productId: this.productId }
+        });
+      } else {
+        this.$router.push({
+          path: "/application/" + url
+        });
+      }
+    },
+    async applyBtn() {
+      let data = {
+        price: this.priceMax.toString(),
+        term: this.defultTime,
+        type: this.type === "天" ? 1 : 2
+      };
+      console.log(data);
+      let res = await orderApply(data);
+      console.log(res);
+    },
+    creditVerify(item) {
+      for (var i in this.material) {
+        if (this.material[i] == 0) {
+          this.$toast(urlName[this.material[i]] + "未认证");
+        } else if (this.material[i] == 2) {
+          this.$toast(urlName[this.material[i]] + "需重新认证");
+        }
+      }
     }
   }
 };
@@ -208,6 +290,7 @@ export default {
         // width: 90%;
         input {
           color: #ffc300;
+          text-align: center;
           font-size: rem(30px);
         }
       }
@@ -216,7 +299,7 @@ export default {
       }
     }
     .fee-num {
-      padding-top: rem(15px);
+      padding-top: rem(21px);
       color: #ffc300;
     }
     .van-dialog__header {
@@ -266,8 +349,8 @@ export default {
       width: 100%;
     }
   }
-  .van-button--primary{
-    border:none;
+  .van-button--primary {
+    border: none;
   }
 }
 </style>

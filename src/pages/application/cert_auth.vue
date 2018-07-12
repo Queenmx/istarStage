@@ -43,7 +43,13 @@
                     </van-col>
                 </van-row>
             </div>
-            <tips></tips>
+            <div class="tips">
+                <p>
+                    温馨提示<br/>
+                    1.拍摄身份证照务必区分人相面、国徽面<br/>
+                    2.身份证照片需本人，清晰且完整
+                </p>
+            </div>
             <van-button type="primary" bottom-action>提交</van-button>
         </div>
     </div>
@@ -55,7 +61,8 @@ export default {
       name: "",
       idCard: "",
       idCardnum: "",
-      imgFile: ""
+      imgFile: "",
+      msg: ""
     };
   },
   methods: {
@@ -68,24 +75,31 @@ export default {
 <style lang="scss">
 @import "../../assets/style/common.scss";
 .cert_auth {
-    .idcard {
-        padding-top: rem(45px);
-        padding-bottom: rem(50px);
-        font-size: rem(24px);
-        img {
-        width: 100%;
-        }
-        span {
-        padding-top: rem(20px);
-        padding-bottom: rem(40px);
-        }
+  .idcard {
+    padding-top: rem(45px);
+    padding-bottom: rem(50px);
+    font-size: rem(24px);
+    img {
+      width: 100%;
     }
-    .backimg {
-        padding-top: rem(60px);
+    span {
+      padding-top: rem(20px);
+      padding-bottom: rem(40px);
     }
-    .van-button--primary{
-        border:none;
-    }
+  }
+  .backimg {
+    padding-top: rem(60px);
+  }
+  .van-button--primary {
+    border: none;
+  }
+  .tips {
+    line-height: rem(38px);
+    color: #a1a1a1;
+    text-align: center;
+    font-size: rem(24px);
+    padding: rem(40px) 0 rem(60px);
+  }
 }
 </style>
 

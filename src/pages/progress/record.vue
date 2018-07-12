@@ -3,6 +3,7 @@
         <v-header title="借款记录"></v-header>
         <split></split>
         <div class="container">
+            <van-pull-refresh v-model="loading" @refresh="onRefresh" :loading-text="loadtext">
             <ul class="card wrap record-ul">
                 <li class="van-hairline--bottom" v-for="(item,index) in product" :key="index" @click="Detail(item)">
                     <van-row>
@@ -20,8 +21,12 @@
                     </van-row>
                 </li>
             </ul>
-            <div v-if="!product.length">暂无记录</div>
+            </van-pull-refresh>
+            <div class="wrap empty" v-if="!product.length">
+                <img src="../../assets/images/empty.png" />
+                暂无记录</div>
         </div>
+        
     </div>
 </template>
 <script>
@@ -43,7 +48,12 @@ export default {
         审核拒绝: "9",
         贷款取消: "17"
       },
-      product: []
+      product: [],
+      loadtext: "加载中",
+      loading: false,
+      counter: 1,
+      listdata: [],
+      pageEnd: 0
     };
   },
   filters: {
@@ -73,6 +83,20 @@ export default {
         path: "/progress/order",
         query: { orderId: item.orderId }
       });
+    },
+    onRefresh() {
+      this.counter++;
+      if (this.counter > this.pageEnd) {
+        this.loadtext = "暂无更多数据";
+        setTimeout(() => {
+          this.loading = false;
+        }, 500);
+        return;
+      }
+      setTimeout(() => {
+        this.loading = false;
+      }, 500);
+      this.init();
     }
   }
 };
@@ -112,6 +136,19 @@ export default {
     .red {
       color: $red;
     }
+  }
+  .empty {
+    text-align: center;
+    img {
+      width: rem(437px);
+      height: rem(456px);
+      display: block;
+      padding: rem(110px) 0 rem(100px);
+      margin: 0 auto;
+    }
+  }
+  .van-pull-refresh {
+    overflow: visible;
   }
 }
 </style>

@@ -9,7 +9,8 @@ function fetch(url, params) {
         //这里做加密
         params.params = strEnc(params.params, KEY);
         let allParams = {
-            appKey: "pro-1530002889-d",
+            // appKey: "pro-1530002889-d",
+            appKey: "PRO0711-01-m",
             sign: "4a82b4b0724c14550edf7db91e3411e6",
             timestamp: new Date().valueOf(),
             data: params.params
@@ -25,7 +26,7 @@ function fetch(url, params) {
                 if (response.data.code == 200) {
                     if (response.data.data) {
                         response.data.data = JSON.parse(strDec(response.data.data, KEY));
-                        console.log(response.data.data)
+                        // console.log(response.data.data)
                     }
                 } else if (response.data.code == 403) {
                     router.push({ path: '/login' })
@@ -158,3 +159,18 @@ export const getrelation = params => {
     params = JSON.stringify(params);
     return fetch("contanctInfo/getByCusId", { params });
 };
+// 试算
+export const calcu = params => {
+    params = JSON.stringify(params);
+    return fetch("proInfo/calcu", { params })
+}
+// 查询产品详细配置信息
+export const proDetail = params => {
+    params = JSON.stringify(params);
+    return fetch("proInfo/config", { params })
+}
+// 推单
+export const orderApply = params => {
+    params = JSON.stringify(params);
+    return fetch("/order/apply", { params })
+}
