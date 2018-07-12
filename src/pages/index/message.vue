@@ -56,10 +56,12 @@ export default {
         var that = this;
         this.listdata = res.data.list;
         this.pageEnd = res.data.pages;
-        this.listdata.map(function(item, index) {
-          that.list.unshift(item);
-        });
-        console.log(this.list);
+        if (this.listdata) {
+          this.listdata.map(function(item, index) {
+            that.list.unshift(item);
+          });
+        }
+        // console.log(this.list);
       }
     },
     onRefresh() {
