@@ -29,7 +29,6 @@ function fetch(url, params) {
               response.data.data = JSON.parse(strDec(response.data.data, KEY));
             } catch (e) {
               response.data.data = strDec(response.data.data, KEY);
-              //   console.log("000");
             }
             // response.data.data = JSON.parse(strDec(response.data.data, KEY));
             // console.log(response.data.data)
@@ -184,4 +183,9 @@ export const orderApply = params => {
 export const getAuthUrl = params => {
   params = JSON.stringify(params);
   return fetch("/infoAuth/collect", { params });
+};
+// 申请认证-身份认证
+export const certAuth = params => {
+  params = JSON.stringify(params);
+  return fetch("identity/idcard", { params });
 };
