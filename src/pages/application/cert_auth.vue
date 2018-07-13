@@ -51,7 +51,7 @@
                         <span class="inblock">活体校验</span>
                     </van-col>
                     <van-col span="10" class="textcenter">
-                        <img src="../../assets/images/exm.png" />
+                        <img src="../../assets/images/exm.png" ref="videoImg" class="uploadMedia"/>
                         <span class="inblock">视频截取</span>
                     </van-col>
                 </van-row>
@@ -63,12 +63,13 @@
                     2.身份证照片需本人，清晰且完整
                 </p>
             </div>
-            <van-button type="primary" bottom-action>提交</van-button>
+            <van-button type="primary" bottom-action @click="back()">提交</van-button>
         </div>
     </div>
 </template>
 <script>
 import { certAuth, certAuthVideo, certAuthRandom } from "@/util/axios.js";
+import { formateTime } from "@/util/util";
 export default {
   data() {
     return {
@@ -106,7 +107,7 @@ export default {
       this.$refs.imgID2.src = file.content;
       let res = await certAuth({ file: file.content });
       if (res.code === 200) {
-        this.effectTime = res.data.effectTime;
+        this.effectTime = formateTime(res.data.effectTime, "yyyy-MM-dd");
       } else {
         this.$toast(res.msg);
       }
@@ -119,11 +120,18 @@ export default {
         bizNo: this.bizNo,
         tokenRandomNumber: this.tokenRandomNumber
       };
-      let res = await certAuthVideo();
+      console.log(data);
+      let res = await certAuthVideo(data);
+      if (res.code === 200) {
+        this.$refs.videoImg.src = res.data;
+      } else {
+        this.$toast(res.msg);
+      }
     },
     async getRandomNumber() {
       let res = await certAuthRandom();
       if (res.code === 200) {
+        console.log(res.data);
         this.bizNo = res.data.bizNo;
         this.tokenRandomNumber = res.data.tokenRandomNumber;
         this.randomNumber = res.data.randomNumber;
@@ -146,6 +154,9 @@ export default {
         this.idCardnum = res.data.cusIdcard;
         this.effectTime = res.data.effectTime;
       }
+    },
+    back() {
+      this.$router.go(-1);
     }
   }
 };
