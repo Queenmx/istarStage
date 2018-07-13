@@ -98,7 +98,7 @@
                                 </label>
                                 <label v-else :for="'plansCheckbox' + i" class="label" :class="item.periodStatus | planStatusStyle" v-text="i + 1">
                                 </label>
-                                <span :class="item.periodStatus | planStatusStyle">{{ item.noRepayAmount | formatMoney('元') }}</span>
+                                <span :class="item.periodStatus | planStatusStyle">{{ item.periodStatus == 2 ? item.repaidAmount:item.noRepayAmount | formatMoney('元') }}</span>
                                 <span class="complete-money inblock">{{item.dueTime|Timeformate}} {{item.periodStatus|planStatus}}</span>
                             </div>
                             <div class="hideinfo">
@@ -143,8 +143,8 @@
                     <label for="checkboxAll" class="label" @click="checkboxAll($event)"></label>
                     <span>已选<span class="failed">{{ plansTotal | formatMoney('元') }}</span></span>
                 </van-col>
-                <van-col span="10" class="payment-atonce">
-                    <button>立即还款</button>
+                <van-col span="10" class="payment-atonce" >
+                    <button @click="bindCard(status[flowFlag])">立即还款</button>
                 </van-col>
             </van-row>
         </div>
@@ -190,7 +190,7 @@ export default {
       bankName: "测试",
       bankNumber: "110",
       productRate: 11,
-      flowFlag: "已结清",
+      flowFlag: "待还款",
       repaidAmount: "0.00",
       noRepayAmount: "0.00",
       activeNames: [],
@@ -204,11 +204,11 @@ export default {
       for (let i = 0; i < this.selectArr.length; i++) {
         total += this.plans[this.selectArr[i]].noRepayAmount;
       }
-      this.plans.forEach(item => {
-        if (item.periodStatus == 1) {
-          total += item.periodAmount;
-        }
-      });
+      //   this.plans.forEach(item => {
+      //     if (item.periodStatus == 1) {
+      //       total += item.periodAmount;
+      //     }
+      //   });
       return total;
     }
   },
@@ -326,17 +326,29 @@ export default {
     },
     async bindCard(type) {
       let url = "http://h5.xinyzx.com:82/istarStage/#/success";
+      let countMoney = 0;
       let data = {
         orderNum: this.orderNum,
         type: type,
         returnUrl: "http://h5.xinyzx.com:82/istarStage/#/progress/record"
       };
+      for (let i in this.selectArr) {
+        countMoney += this.plans[this.selectArr[i]].noRepayAmount;
+      }
       if (type == 1) {
         data.returnUrl = url + "?type=1";
-      } else {
+      } else if (type == 3) {
         data.type = 2;
         data.returnUrl = url + "?type=2";
+      } else {
+        data.type = 3;
+        data.returnUrl = Base64.encode(url + "?type=3");
+        data = Object.assign(
+          { price: parseFloat(countMoney.toFixed(2)) },
+          data
+        );
       }
+      console.log(data);
       let res = await getUrl(data);
       if (res.code == 200) {
         location.href = res.data;

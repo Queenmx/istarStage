@@ -38,7 +38,7 @@
                     <van-row class="order-progress whitebg" type="flex" justify="space-between" @click="toDetail">
                         <van-col class="pro-name" span="18">
                             <h2>还款计划</h2>
-                            <span>{{time}} | 应还金额 {{loanamount}}</span>
+                            <span>{{time}} | 应还金额 {{loanamount}}元</span>
                         </van-col>
                         <van-col class="orderstatus textright" span="6">{{flowFlag}}</van-col>
                     </van-row>
@@ -118,13 +118,13 @@ export default {
         this.productName = res.data.info.productName;
         this.auditedAmount = res.data.info.auditedAmount;
         this.flowFlag = res.data.info.flowFlag;
-        res.data.info.canRepayTime
+        res.data.info.dueTime
           ? (this.time = formateTime(
-              new Date(res.data.info.canRepayTime),
+              new Date(res.data.info.dueTime * 1000),
               "yyyy-MM-dd"
             ))
           : "";
-        this.loanamount = res.data.info.periodAmount;
+        this.loanamount = res.data.info.noRepayAmount;
         this.orderId = res.data.info.orderId;
         this.orderNum = res.data.info.orderNum;
       }
@@ -142,6 +142,8 @@ export default {
         this.toPath(1, url + "?type=1");
       } else if (flag == 3) {
         this.toPath(2, url + "?type=2");
+      } else {
+        this.$toast("请耐心等待");
       }
     },
     async toPath(type, url) {
