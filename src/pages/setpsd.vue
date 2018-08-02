@@ -1,13 +1,15 @@
 <template>
-    <div class="setpsd wrap container">
+    <div class="setpsd container">
         <v-header title="设置密码"></v-header>
         <split></split>
-        <van-cell-group>
-            <van-field  type="password" placeholder="请输入密码（密码为6-16位，字母+数字组合）"  v-model="psd" />
-        </van-cell-group>
-        <van-cell-group>
-            <van-field  type="password" placeholder="请再次输入密码"  v-model="repsd" />
-        </van-cell-group>
+        <div class="whitebg wrap">
+            <van-cell-group>
+                <van-field  type="password" placeholder="请输入密码（密码为6-16位，字母+数字组合）"  v-model.trim="psd" />
+            </van-cell-group>
+            <van-cell-group>
+                <van-field  type="password" placeholder="请再次输入密码"  v-model.trim="repsd" />
+            </van-cell-group>
+        </div>
         <div class="btnBox">
             <van-button size="large" type="primary" @click="confirm">确定</van-button>
         </div>
@@ -27,12 +29,15 @@ export default {
   },
   methods: {
     confirm() {
-      if (!/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/.test(this.psd)) {
+      if (!this.psd) {
+        this.$toast("密码不能为空");
+      } else if (
+        !/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/.test(this.psd)
+      ) {
         //6-12位数字和字母
         this.$toast("密码格式不正确");
         return false;
-      }
-      if (this.psd != this.repsd) {
+      } else if (this.psd != this.repsd) {
         this.$toast("两次密码输入不一致");
       } else {
         this.setPassword();
@@ -45,9 +50,14 @@ export default {
         cusPassword: this.psd
       };
       let res = await setPassword(data);
+      console.log(res);
       if (res.code == 200) {
         this.$toast(res.msg);
-        this.$router.push({ path: "/certification" });
+        if (res.data == true) {
+          this.$router.push({ path: "/certification" });
+        } else {
+          this.$router.push({ path: "/" });
+        }
       } else {
         this.$toast(res.msg);
       }

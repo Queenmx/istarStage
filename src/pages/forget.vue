@@ -4,11 +4,11 @@
         <split></split>
         <div class="container">
         <van-cell-group>
-            <van-field placeholder="请输入手机号码"  v-model="psd" />
+            <van-field placeholder="请输入手机号码"  v-model.trim="psd" type="number"/>
         </van-cell-group>
         <van-cell-group>
-            <van-field v-model="sms" center clearable placeholder="请输入短信验证码">
-                <van-button slot="button" size="small" type="primary" @click="settime()" class="settime" :disabled="isDisable">{{msg}}</van-button>
+            <van-field v-model.trim="sms" center clearable placeholder="请输入短信验证码" type="number">
+                <van-button slot="button" size="small" type="primary" @click="sendValidateCode()" class="settime" :disabled="isDisable">{{msg}}</van-button>
             </van-field>
         </van-cell-group>
         </div>
@@ -34,10 +34,6 @@ export default {
   },
   methods: {
     settime() {
-      if (!/^1(3|4|5|6|7|8)\d{9}$/.test(this.psd)) {
-        this.$toast("请输入正确的手机号码");
-        return false;
-      }
       const TIME_COUNT = 60;
       if (!this.timer) {
         this.count = TIME_COUNT;
@@ -53,15 +49,23 @@ export default {
             this.timer = null;
           }
         }, 1000);
-        this.sendValidateCode();
+        // this.sendValidateCode();
       }
     },
     //发送验证码接口
     async sendValidateCode() {
+      if (!/^1(3|4|5|6|7|8)\d{9}$/.test(this.psd)) {
+        this.$toast("请输入正确的手机号码");
+        return false;
+      }
       let data = {
-        cusPhone: this.psd
+        cusPhone: this.psd,
+        codeType: 2
       };
       let res = await sendValidateCode(data);
+      if (res.code == 200) {
+        this.settime();
+      }
       this.$toast(res.msg);
     },
     //忘记密码

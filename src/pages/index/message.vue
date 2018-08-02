@@ -3,7 +3,7 @@
       <v-header title="系统消息"></v-header>
       <van-pull-refresh v-model="loading" @refresh="onRefresh" :loading-text="loadtext">
             <van-cell-group>
-              <van-cell v-for="item in list" :key="item.noticeId" 
+              <van-cell v-for="(item,index) in list" :key="index" 
                         class="messageli item-wrap" :class="item.isRead==0?'notread':''" 
                         :title='item.title' :clickable='clickable' 
                         @click="markedAsRead(item.noticeId);item.isRead=1"
@@ -50,6 +50,7 @@ export default {
         pageNum: num,
         pageSize: "10"
       };
+      console.log(data);
       let res = await getMessageList(data);
       console.log(res);
       if (res.code == 200) {
@@ -58,10 +59,9 @@ export default {
         this.pageEnd = res.data.pages;
         if (this.listdata) {
           this.listdata.map(function(item, index) {
-            that.list.unshift(item);
+            that.list.push(item);
           });
         }
-        // console.log(this.list);
       }
     },
     onRefresh() {
@@ -76,12 +76,12 @@ export default {
       setTimeout(() => {
         this.loading = false;
       }, 500);
-      this.getMessageList(this.counter);
+      this.getMessageList(1);
     }
   }
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "../../assets/style/common.scss";
 .message {
   padding-top: rem(95px);

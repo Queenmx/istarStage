@@ -1,9 +1,9 @@
 <template>
     <div class="success">
-        <v-header title="申请结果"></v-header>
+        <v-header title="操作结果"><i slot="left"><van-icon name="arrow-left" @click='index'/></i></v-header>
         <div class="container">
-            <img src="../assets/images/success.png" />
-            <span class="hint">操作成功！</span>
+            <img :src="repay_result == 505 ? require('../assets/images/fail.png'):require('../assets/images/success.png')" />
+            <span class="hint">{{repay_result == 505 ?'操作失败！' :'操作成功！'}}</span>
         </div>
         <router-link class="btnBox" to="/">
             <van-button size="large" type="primary">返回首页</van-button>
@@ -14,7 +14,8 @@
 export default {
   data() {
     return {
-      type: this.$route.query.type
+      step: this.$route.query.step,
+      repay_result: this.$route.query.repay_result
     };
   },
   mounted() {
@@ -22,7 +23,11 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.type);
+      console.log(this.repay_result);
+      console.log(this.step);
+    },
+    index() {
+      this.$router.push({ path: "/" });
     }
   }
 };

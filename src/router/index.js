@@ -16,6 +16,7 @@ import opinion from '@/pages/index/opinion'
 import changetel from '@/pages/index/changetel'
 import aboutus from '@/pages/index/aboutus'
 import quesDetail from '@/pages/index/quesDetail'
+import repayDetail from '@/pages/index/repayDetail'
 import message from '@/pages/index/message'
 
 import certAuth from '@/pages/application/cert_auth'
@@ -33,6 +34,7 @@ import order from '@/pages/progress/order'
 Vue.use(Router)
 
 const router = new Router({
+    // mode: 'history',
     routes: [
         {
             path: '/',
@@ -97,6 +99,10 @@ const router = new Router({
         {
             path: '/index/quesDetail',
             component: quesDetail
+        },
+        {
+            path: '/index/repayDetail',
+            component: repayDetail
         },
         {
             path: '/index/message',

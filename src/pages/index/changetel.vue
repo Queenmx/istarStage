@@ -19,12 +19,12 @@
     </div>
 </template>
 <script>
-import {  setItem,delItem,getItem } from "@/util/util.js";
-import {  } from "@/util/axios";
+import { setItem, delItem, getItem } from "@/util/util.js";
+import {} from "@/util/axios";
 export default {
   data() {
     return {
-      title:'修改手机号码',
+      title: "修改手机号码",
       userInfo: getItem("userInfo"),
       phone: "",
       sms: "",
@@ -33,19 +33,15 @@ export default {
       timer: null,
       msg: "发送验证码",
       isDisable: false
-      
-      
     };
   },
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {
-    changetel(){
-      if(!this.phone||!this.sms){
-        this.$toast("请输入手机号或验证码")
-      }else{
-        this.$toast("你想修改手机号码？？？？还是专一点吧")      
+    changetel() {
+      if (!this.phone || !this.sms) {
+        this.$toast("请输入手机号或验证码");
+      } else {
+        this.$toast("你想修改手机号码？？？？还是专一点吧");
       }
     },
     settime() {
@@ -71,11 +67,10 @@ export default {
         }, 1000);
       }
     }
-
   }
-}
+};
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "../../assets/style/common.scss";
 @import "../../assets/style/style.scss";
 .change-pwd {
@@ -90,8 +85,8 @@ export default {
       // margin-right: rem(93px);
       display: inline-block;
       width: rem(216px);
-      color:#686868;
-      font-size:rem(30px);
+      color: #686868;
+      font-size: rem(30px);
     }
   }
   .btn {
@@ -110,10 +105,22 @@ export default {
       font-size: rem(32px);
       border: none;
       background: #f8f8f8;
-      &::-webkit-input-placeholder { color: #bbbbbb;font-size:rem(28px); } 
-      &::-moz-placeholder { color: #bbbbbb;font-size:rem(28px); } 
-      &::-moz-placeholder { color: #bbbbbb;font-size:rem(28px); } 
-      &::-ms-input-placeholder { color: #bbbbbb;font-size:rem(28px);}
+      &::-webkit-input-placeholder {
+        color: #bbbbbb;
+        font-size: rem(28px);
+      }
+      &::-moz-placeholder {
+        color: #bbbbbb;
+        font-size: rem(28px);
+      }
+      &::-moz-placeholder {
+        color: #bbbbbb;
+        font-size: rem(28px);
+      }
+      &::-ms-input-placeholder {
+        color: #bbbbbb;
+        font-size: rem(28px);
+      }
     }
   }
 }

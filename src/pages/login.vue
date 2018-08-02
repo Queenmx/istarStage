@@ -1,7 +1,7 @@
 <template>
 <div class="login">
     <div class="logo">
-      <span class="headicon">LOGO</span>
+      <span class="headicon"><img src="../assets/images/logo.png"></span>
     </div>
     <van-row type="flex" justify="center" class="main">
         <van-col span="24">
@@ -9,22 +9,22 @@
                 <van-tab title="账号登录">
                     <van-cell-group :border="isBorder">
                         <i class="psdicon peo"></i>
-                        <van-field placeholder="请输入手机号码" v-model="phone" />
+                        <van-field placeholder="请输入手机号码" v-model.trim="phone" type="number" />
                     </van-cell-group>
                     <van-cell-group>
                         <i class="psdicon lock"></i>
-                        <van-field  type="password" placeholder="请输入密码" v-model="psd" />                                                 
+                        <van-field  type="password" placeholder="请输入密码" v-model.trim="psd" />                                                 
                     </van-cell-group>
                 </van-tab>
                 <van-tab title="验证码登录">
                     <van-cell-group :border="isBorder">
                         <i class="psdicon peo"></i>
-                        <van-field placeholder="请输入手机号码" v-model="phone" />
+                        <van-field placeholder="请输入手机号码" v-model.trim="phone" type="number" />
                     </van-cell-group>
                     <van-cell-group>
                         <i class="psdicon safe"></i>
-                        <van-field v-model="sms" center clearable placeholder="请输入短信验证码">
-                            <van-button slot="button" size="small" type="primary" @click="settime()" class="settime" :disabled="isDisable">{{msg}}</van-button>
+                        <van-field v-model.trim="sms" center clearable placeholder="请输入短信验证码" type="number">
+                            <van-button slot="button" size="small" type="primary" @click="sendValidateCode()" class="settime" :disabled="isDisable">{{msg}}</van-button>
                         </van-field>
                     </van-cell-group>
                 </van-tab>
@@ -33,7 +33,7 @@
     </van-row>
     <router-link class="forget inblock" to="/forget">忘记密码</router-link>
     <div class="btnBox">
-        <van-button size="large" type="primary" @click="login">登录</van-button>
+        <van-button size="large" type="primary" @click="login" :disabled="verify">登录</van-button>
         <van-button size="large" type="primary" @click="sign">注册</van-button>
     </div>
     
@@ -43,7 +43,7 @@
 
 <script>
 import { getUser, sendValidateCode, loginByCode } from "@/util/axios";
-import { setItem } from "@/util/util.js";
+import { setItem, callPhone } from "@/util/util.js";
 export default {
   data() {
     return {
@@ -57,8 +57,20 @@ export default {
       timer: null,
       msg: "发送验证码",
       isDisable: false,
-      isBorder: false
+      isBorder: false,
+      inputValue: false
     };
+  },
+  computed: {
+    verify() {
+      let flag = true;
+      if (this.active === 1) {
+        flag = this.phone && this.sms ? !flag : flag;
+      } else {
+        flag = this.phone && this.psd ? !flag : flag;
+      }
+      return flag;
+    }
   },
   methods: {
     sign() {
@@ -66,10 +78,6 @@ export default {
     },
     //发送验证码
     settime() {
-      if (!/^1(3|4|5|6|7|8)\d{9}$/.test(this.phone)) {
-        this.$toast("请输入正确的手机号码");
-        return false;
-      }
       const TIME_COUNT = 60;
       if (!this.timer) {
         this.count = TIME_COUNT;
@@ -86,7 +94,7 @@ export default {
             this.timer = null;
           }
         }, 1000);
-        this.sendValidateCode();
+        // this.sendValidateCode();
       }
     },
     login() {
@@ -116,11 +124,20 @@ export default {
     },
     //发送验证码接口
     async sendValidateCode() {
+      if (!/^1(3|4|5|6|7|8)\d{9}$/.test(this.phone)) {
+        this.$toast("请输入正确的手机号码");
+        return false;
+      }
       let data = {
-        cusPhone: this.phone
+        cusPhone: this.phone,
+        codeType: 0
       };
       let res = await sendValidateCode(data);
-      this.$toast(res.msg);
+      if (res.code == 200) {
+        this.settime();
+      } else {
+        this.$toast(res.msg);
+      }
     },
     //密码登录
     async loginpsd() {
@@ -128,8 +145,13 @@ export default {
         cusPhone: this.phone,
         cusPassword: this.psd
       };
+      let appdata = {
+        type: 1,
+        phone: this.phone
+      };
       let res = await getUser(data);
       if (res.code == 200) {
+        callPhone(appdata);
         setItem("api_token", res.data.token);
         setItem("userInfo", data);
         if (res.data.isRealName) {
@@ -150,8 +172,13 @@ export default {
         cusPhone: this.phone,
         cusCode: this.sms
       };
+      let appdata = {
+        type: 1,
+        phone: this.phone
+      };
       let res = await loginByCode(data);
       if (res.code == 200) {
+        callPhone(appdata);
         setItem("api_token", res.data.token);
         setItem("userInfo", data);
         if (res.data.isRealName) {
@@ -187,6 +214,10 @@ export default {
     border-radius: 50%;
     background: #fff;
     margin: rem(104px) auto;
+    overflow: hidden;
+    img {
+      width: 100%;
+    }
   }
 }
 .forget {

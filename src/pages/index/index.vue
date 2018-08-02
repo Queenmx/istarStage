@@ -18,7 +18,7 @@
                 <div class="main-card whitebg">
                     <h3>借款金额（元）</h3>
                     <span class="money">{{money?money:"00"}}</span>
-                    <p class="tips">借1000，每天利息低至1元，具体以显示为准</p>
+                    <!-- <p class="tips">借1000，每天利息低至1元，具体以显示为准</p> -->
                     <div class="apply">
                         <van-button size="large" type="primary" :disabled="orderStatus!= 0" @click="apply">{{orderStatus== 0 ?'立即申请':  '申请中'}}</van-button>
                     </div>
@@ -50,6 +50,14 @@
                         <van-col class="textright arrow" span="10"><van-icon name="arrow"/></van-col>
                     </van-row>
                 </router-link>
+                <!-- <van-dialog v-model="maskShow" title="签约提示" message="你的借款申请已通过，赶紧签约吧！！！">
+                    <van-icon name="close"></van-icon>
+                </van-dialog> -->
+                <van-popup v-model="maskShow" class="mask">
+                    <h4>签约提示<van-icon name="close" @click="closeMask"></van-icon></h4>
+                    <p>你的借款申请已通过，赶紧签约吧！！！</p>
+                    <van-button size="small" type="primary" @click="toPath(2,'http://h5.xinyzx.com:82/istarStage/#/success?type=2')">去签约</van-button>
+                </van-popup>
             </div>
         </div>
         
@@ -66,8 +74,8 @@ export default {
       productName: "",
       auditedAmount: "",
       unable: "",
-      orderStatus: 3,
-      flowFlag: "待签约",
+      orderStatus: 0,
+      flowFlag: "",
       loanamount: "",
       time: new Date(),
       images: [
@@ -91,7 +99,8 @@ export default {
       },
       hasNews: false,
       orderId: "",
-      orderNum: ""
+      orderNum: "",
+      maskShow: false
     };
   },
   filters: {
@@ -127,7 +136,12 @@ export default {
         this.loanamount = res.data.info.noRepayAmount;
         this.orderId = res.data.info.orderId;
         this.orderNum = res.data.info.orderNum;
+        if (this.status[this.flowFlag] == 3) {
+          this.maskShow = true;
+        }
       }
+
+      console.log(this.status[this.flowFlag]);
     },
     apply() {
       this.$router.push({ path: "/index/product" });
@@ -135,15 +149,18 @@ export default {
     toDetail() {
       this.$router.push({ path: "/progress" });
     },
+    closeMask() {
+      this.maskShow = false;
+    },
     toComplete(flag) {
       console.log(flag);
       let url = "http://h5.xinyzx.com:82/istarStage/#/success";
       if (flag == 1) {
-        this.toPath(1, url + "?type=1");
+        this.toPath(1, escape(url + "?type=1"));
       } else if (flag == 3) {
         this.toPath(2, url + "?type=2");
       } else {
-        this.$toast("请耐心等待");
+        this.reCode();
       }
     },
     async toPath(type, url) {
@@ -189,7 +206,6 @@ export default {
 .index {
   .van-swipe {
     height: rem(300px);
-    margin-top: -1px;
     img {
       width: 100%;
       height: 100%;
@@ -253,6 +269,28 @@ export default {
     display: inline-block;
     position: absolute;
     right: rem(1px);
+  }
+  .mask {
+    text-align: center;
+    width: rem(600px);
+    padding-bottom: rem(50px);
+    border-radius: rem(10px);
+    h4 {
+      width: 100%;
+      line-height: rem(100px);
+      i {
+        position: absolute;
+        right: rem(15px);
+        top: rem(15px);
+        font-size: rem(40px);
+      }
+    }
+    p {
+      padding: rem(20px) 0 rem(50px);
+    }
+    button {
+      border-radius: rem(50px);
+    }
   }
 }
 </style>

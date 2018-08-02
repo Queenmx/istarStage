@@ -87,7 +87,6 @@ export default {
 .vertify {
   .vertify-money {
     background: $blue;
-    margin-top: -1px;
     color: #fff;
     p {
       padding-bottom: rem(65px);

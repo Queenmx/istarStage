@@ -1,4 +1,5 @@
 <template>
+<!-- <div class="head-con"> -->
     <div class="wrap flex header">
         <div class="left">
             <slot name="left">
@@ -10,6 +11,8 @@
             <slot name="right"></slot>
         </div>
     </div>
+    <!-- <div class="head-bg"></div>
+</div> -->
 </template>
 <script>
 import { checkSys } from "@/util/util";
@@ -19,6 +22,12 @@ export default {
       default: "星分期",
       type: String
     }
+  },
+  data() {
+    return {
+      ios: false,
+      topBarHeight: 15
+    };
   },
   mounted() {
     this.setHeight();
@@ -32,9 +41,9 @@ export default {
     },
     setHeight() {
       let sys = checkSys();
-      //   if (sys == "ios") {
-      //     document.getElementsByClassName("header")[0].style.height = "64px";
-      //   }
+      if (sys == "android") {
+        this.topBarHeight = 0;
+      }
     }
   }
 };
@@ -74,6 +83,24 @@ export default {
     font-size: rem(30px);
     color: #fff;
   }
+}
+.headerplus,
+.headbgplus {
+  padding-top: rem(30px);
+}
+.head-bg {
+  height: rem(95px);
+}
+@media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+  /*增加头部适配层*/
+  //   @supports (bottom: constant(safe-area-inset-bottom)) {
+  .head-bg {
+    padding-top: constant(safe-area-inset-bottom);
+  }
+  .header {
+    padding-top: constant(safe-area-inset-bottom);
+  }
+  //   }
 }
 </style>
 

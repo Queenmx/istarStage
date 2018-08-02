@@ -16,7 +16,7 @@
                     </van-col>
                 </van-row>
             </div>
-            <div class="planpart-one" v-show="status[flowFlag] < 10">
+            <div class="planpart-one" v-if="status[flowFlag] < 10">
                 <h4 class="van-hairline--bottom wrap card plan-tit">借款进度</h4>
                 <div class="plan card">
                     <van-steps class="plan-tree" direction="vertical" :active="activeValue(status[flowFlag])" active-color="#0074e4">
@@ -44,7 +44,7 @@
                 </div>
             </div>
             <!-- 已结清 -->
-            <div class="plan-complete" v-if="status[flowFlag] == 16 || status[flowFlag] == 12">
+            <div class="plan-complete" v-if="status[flowFlag] == 16 || status[flowFlag] == 12 || status[flowFlag] == 14">
                 <van-collapse v-model="activeNames">
                     <van-collapse-item name="1">
                         <div slot="title">{{productName}}<span class="complete-money inblock">￥{{applyPrice}}元</span></div>     
@@ -58,7 +58,7 @@
                                 <van-col span="10" class="textright">{{applyTerm+applyType[termType]}}</van-col>
                             </van-row>
                             <van-row type="flex" justify="space-between">
-                                <van-col span="10">年化率</van-col>
+                                <van-col span="10">年化利率</van-col>
                                 <van-col span="10" class="textright">{{productRate}}%</van-col>
                             </van-row>
                             <van-row type="flex" justify="space-between">
@@ -76,7 +76,7 @@
                         </div>
                         <h4 class="contract-tit">借款合同</h4>
                         <ul class="contract">
-                            <li v-for="(item,index) in contractInfo" :key="index">
+                            <li class="ellipsis" v-for="(item,index) in contractInfo" :key="index">
                                 <span @click="loadUrl(item.fieldValue)">{{item.fieldName}}</span>
                             </li>
                         </ul>
@@ -125,18 +125,18 @@
             </div>
             </div>
             <split></split> 
-            <div class="card" v-if="status[flowFlag] != 16 && status[flowFlag] != 12">
+            <div class="card" v-if="status[flowFlag] != 16 && status[flowFlag] != 12 && status[flowFlag] != 14">
                 <van-cell-group>
                     <van-cell title="申请金额" :value="'￥'+applyPrice" />
                     <van-cell title="借款期限" :value="applyTerm+applyType[termType]" />
-                    <van-cell title="产品利率" :value="productRate +'%'" />
+                    <van-cell title="年化利率" :value="productRate +'%'" />
                     <van-cell title="收款银行卡" :value="bankNumber" v-if="status[flowFlag] != 1" />
                     <van-cell title="申请时间" :value="applyTime" />
                     <van-cell title="订单编号" :value="orderNum" />
                 </van-cell-group>
             </div>
         </div>
-        <div class="footer" v-if="status[flowFlag] == 12">
+        <div class="footer" v-if="status[flowFlag] == 12 || status[flowFlag] == 14">
             <van-row type="flex" justify="space-between">
                 <van-col span="14">
                     <input type="checkbox" name="checkboxAll" id="checkboxAll" value="all" />
@@ -180,17 +180,17 @@ export default {
       activeList: "",
       productName: "",
       applyPrice: "0.00",
-      productType: "H5",
-      applyTerm: 465,
+      productType: "",
+      applyTerm: 0,
       termType: 1,
-      channelNum: "li2",
+      channelNum: "",
       payType: 0,
       applyTime: 456454,
       orderNum: "on",
       bankName: "测试",
-      bankNumber: "110",
-      productRate: 11,
-      flowFlag: "待还款",
+      bankNumber: "",
+      productRate: 0,
+      flowFlag: "",
       repaidAmount: "0.00",
       noRepayAmount: "0.00",
       activeNames: [],
@@ -307,6 +307,7 @@ export default {
         this.termType = res.data.repayOrderDetail.termType;
         this.channelNum = res.data.repayOrderDetail.channelNum;
         this.payType = res.data.repayOrderDetail.payType;
+        this.productRate = res.data.repayOrderDetail.productRate;
         this.applyTime = formateTime(
           new Date(res.data.repayOrderDetail.applyTime * 1000),
           "yyyy-MM-dd"
@@ -336,13 +337,13 @@ export default {
         countMoney += this.plans[this.selectArr[i]].noRepayAmount;
       }
       if (type == 1) {
-        data.returnUrl = url + "?type=1";
+        data.returnUrl = url + "?step=1";
       } else if (type == 3) {
         data.type = 2;
-        data.returnUrl = url + "?type=2";
+        data.returnUrl = url + "?step=2";
       } else {
         data.type = 3;
-        data.returnUrl = Base64.encode(url + "?type=3");
+        data.returnUrl = Base64.encode(url + "?step=3");
         data = Object.assign(
           { price: parseFloat(countMoney.toFixed(2)) },
           data
@@ -365,7 +366,6 @@ export default {
     background: $blue;
     line-height: rem(120px);
     color: #fff;
-    margin-top: -1px;
     .clock {
       width: rem(76px);
       height: rem(76px);
@@ -407,6 +407,26 @@ export default {
   .van-step--vertical:not(:last-child)::after {
     border: none;
   }
+  .van-step--vertical:first-child::before {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 20px;
+    background-color: #fff;
+    top: 0;
+    left: -16px;
+    z-index: 1;
+  }
+  //   .van-step--vertical:last-child::after {
+  //     content: "";
+  //     position: absolute;
+  //     width: 10px;
+  //     height: 78px;
+  //     background-color: #fff;
+  //     top: 27px;
+  //     left: -16px;
+  //     z-index: 1;
+  //   }
   .van-step--finish {
     h3 {
       color: $blue;

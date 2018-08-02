@@ -94,15 +94,11 @@ export function checkSys() {
         return "unknown";
     }
 }
-export function callAddress() {
-    var native = function (data) { };
-    return nativeInteractive(native, 1);
-}
 export function callPhone(str) {
     var native = function (data) {
         console.log(data);
     };
-    return this.nativeInteractive(native, str);
+    return nativeInteractive(native, str);
 }
 function setupWebViewJavascriptBridge(callback) {
     if (window.WebViewJavascriptBridge) {
@@ -122,26 +118,26 @@ function setupWebViewJavascriptBridge(callback) {
     }, 0);
 }
 function nativeInteractive(fn, obj) {
-    // console.log(123);
+    console.log(123);
     setupWebViewJavascriptBridge(function (bridge) {
         if (obj) {
-            bridge.callHandler("webview_call_native_phone", obj, function (
+            bridge.callHandler("webview_call_native", obj, function (
                 response
             ) { });
         }
-        bridge.registerHandler("native_call_webview_phone", function (
+        bridge.registerHandler("native_call_webview", function (
             data,
             response
         ) {
             fn(data);
         });
     });
-    if (window.xingrongjinfu && obj) {
+    if (window.xingfenqi && obj) {
         var str = JSON.stringify(obj);
-        window.xingrongjinfu.webview_call_native_address();
+        window.xingfenqi.webview_call_native(str);
     }
 
-    window.native_call_webview_phone = function (data) {
+    window.native_call_webview = function (data) {
         var obj = eval("(" + data + ")");
         fn(obj);
     };
@@ -180,3 +176,10 @@ export function stringHidePart(strObj) {
 
     return strRel;
 };
+
+export function verifyName(name) {
+    var reg = /^[\u4E00-\u9FA5\uf900-\ufa2d·s]{2,20}$/
+    return reg.test(name)
+}
+
+

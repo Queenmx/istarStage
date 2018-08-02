@@ -6,7 +6,7 @@
             <ul class="baseinfo">
                 <li>
                     <van-cell-group>
-                        <van-field label="与本人关系" placeholder="请选择关系"  v-model="direct" @click="isShowDirect=!isShowDirect" icon="arrow" @click-icon="isShowDirect=!isShowDirect" :disabled="disabled" />
+                        <van-field label="与本人关系" placeholder="请选择关系"  v-model="direct" icon="arrow" @click-icon="isShowDirect=!isShowDirect" disabled="disabled" />
                     </van-cell-group>
                     <van-popup v-model="isShowDirect" @change="onChange" position="bottom">
                         <van-picker show-toolbar :columns="columns" @cancel="onCancel" @confirm="onConfirm" />
@@ -27,7 +27,7 @@
             <ul class="baseinfo">
                 <li>
                     <van-cell-group>
-                        <van-field label="与本人关系" placeholder="请选择关系"  v-model="relation" @click="isShowRelation=!isShowRelation" icon="arrow" @click-icon="isShowRelation=!isShowRelation" :disabled="disabled" />
+                        <van-field label="与本人关系" placeholder="请选择关系"  v-model="relation" icon="arrow" @click-icon="isShowRelation=!isShowRelation" disabled="disabled" />
                     </van-cell-group>
                     <van-popup v-model="isShowRelation" @change="onChange" position="bottom">
                         <van-picker show-toolbar :columns="columns" @cancel="onCancel" @confirm="Relation" />
@@ -46,7 +46,7 @@
             </ul>
             <tips></tips>
         </div>
-        <van-button type="primary" bottom-action @click="confirmbtn" :class="isShowbtn?'':'hide'">提交</van-button>
+        <van-button type="primary" bottom-action @click="confirmbtn" v-show="isShowbtn">提交</van-button>
     </div>
 </template>
 <script>
@@ -71,6 +71,7 @@ export default {
   },
   mounted() {
     this.init();
+    this.fixedFooter();
   },
   methods: {
     onConfirm(value, index) {
@@ -147,7 +148,6 @@ export default {
       let tep = {};
       var temp = {};
       var that = this;
-
       tep.contactName = that.name;
       tep.contactPhone = that.phone;
       tep.contactRelation = that.direct;
@@ -163,6 +163,19 @@ export default {
       } else {
         this.$toast(res.msg);
       }
+    },
+    fixedFooter() {
+      var windheight = document.body.clientHeight; /*未唤起键盘时当前窗口高度*/
+      var self = this;
+      window.onresize = function() {
+        var docheight = document.body.clientHeight; /*唤起键盘时当前窗口高度*/
+        if (docheight < windheight) {
+          /*当唤起键盘高度小于未唤起键盘高度时执行*/
+          self.isShowbtn = false;
+        } else {
+          self.isShowbtn = true;
+        }
+      };
     }
   }
 };

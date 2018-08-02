@@ -14,6 +14,10 @@ a {
 }
 body {
   background: $bgcolor;
+//   display: flex;
+//   -webkit-display:flex;
+//   flex-direction:column;
+//   min-height: 100vh
 }
 .router-link-active {
   color: $black;
@@ -40,6 +44,9 @@ body {
     -moz-box-shadow: $shadow;
     box-shadow: $shadow;
 }
+a {
+  padding: 0;
+}
 .wrap {
   padding-left: rem(30px);
   padding-right: rem(30px);
@@ -48,10 +55,17 @@ body {
     background: #fff
 }
 .container{
+    // flex: 1;
     padding-top: rem(95px);
+    margin-top: -1px;
     padding-bottom: 50px;
     font-size: rem(30px);
+    overflow: hidden;
 }
+// .bottombtn{
+//     width: 100%;
+//     border-radius: 0;
+// }
 .flex {
   display: flex;
   align-items: center;
@@ -97,4 +111,7 @@ body {
     padding-top: rem(35px);
     padding-bottom: rem(35px);
     font-size: rem(30px);
+}
+.van-field--disabled .van-field__control{
+    color: $black
 }

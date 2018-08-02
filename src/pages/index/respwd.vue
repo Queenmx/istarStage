@@ -2,21 +2,11 @@
     <div class="change-pwd">
         <v-header :title="title"></v-header>
         <form action="" onsubmit="return false">
-          <div class="wrap flex item">
-              <span class="title">旧密码</span>
-              <div class="rest input-wrap"><input :type="isSeeOld?'text':'password'" v-model="oldPwd" placeholder="请填写原密码"></div>
-              <van-icon :name="isSeeOld?'password-view':'password-not-view'" class="icon" @click="isSeeOld=!isSeeOld"/>
-          </div>
-          <div class="wrap flex item">
-              <span class="title">新密码</span>
-              <div class="rest input-wrap"><input :type="isSeeNew?'text':'password'" v-model="newPwd" placeholder="请填写新密码"></div>
-              <van-icon :name="isSeeNew?'password-view':'password-not-view'" class="icon"  @click="isSeeNew=!isSeeNew"/>
-          </div>
-          <div class="wrap flex item">
-              <span class="title">确认新密码</span>
-              <div class="rest input-wrap"><input :type="isAgain?'text':'password'" v-model="resNewPwd" placeholder="请再次填写新密码"></div>
-              <van-icon :name="isAgain?'password-view':'password-not-view'" class="icon"  @click="isAgain=!isAgain"/>
-          </div>
+          <van-cell-group>
+              <van-field label="旧密码" v-model.trim="oldPwd" :type="isSeeOld?'text':'password'" placeholder="请填写原密码" :icon="isSeeOld?'password-view':'password-not-view'" @click-icon="isSeeOld=!isSeeOld" />
+              <van-field label="新密码" v-model.trim="newPwd" :type="isSeeNew?'text':'password'" placeholder="请填写新密码" :icon="isSeeNew?'password-view':'password-not-view'" @click-icon="isSeeNew=!isSeeNew" />
+              <van-field label="新密码" v-model.trim="resNewPwd" :type="isAgain?'text':'password'" placeholder="请再次填写新密码" :icon="isAgain?'password-view':'password-not-view'" @click-icon="isAgain=!isAgain" />
+          </van-cell-group>
           <div class="apply">
               <van-button size="large" type="primary" class="btn" @click="updatePwd">提交</van-button>
           </div>
@@ -42,7 +32,7 @@ export default {
   mounted() {},
   methods: {
     async updatePwd() {
-      var that=this;
+      var that = this;
       let data = {
         cusPassword: this.oldPwd,
         newPwd: this.newPwd
@@ -53,29 +43,25 @@ export default {
         this.$toast("请输入新密码");
       } else if (this.newPwd != this.resNewPwd) {
         this.$toast("新密码输入不一致");
-      } else {        
+      } else {
         let res = await updatePwd(data);
-        if(res.code==200){
+        if (res.code == 200) {
           this.$toast(res.msg);
-          setTimeout(function(){
-            that.$router.push({ path: "/index/personcenter"});
-          },2000)
-          
-        }else{
+          setTimeout(function() {
+            that.$router.push({ path: "/index/personcenter" });
+          }, 2000);
+        } else {
           this.$toast(res.msg);
         }
-        
       }
     }
   }
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "../../assets/style/common.scss";
 @import "../../assets/style/style.scss";
 .change-pwd {
-  padding-top: rem(95px);
-  background: #f8f8f8;
   box-sizing: border-box;
   .item {
     height: rem(144px);

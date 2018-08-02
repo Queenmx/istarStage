@@ -5,11 +5,11 @@
         <div class="container wrap">
                 <div class="product-card card">
                     <van-row type="flex" justify="space-between" class="baseInfo">
-                        <van-col span="12">
+                        <van-col span="10">
                             <h4>借款金额</h4>
                             <div class="flex">
                                 <van-cell-group>
-                                    <van-field v-model="price"  :placeholder="priceMax +'元'" @click="isShowMoney=!isShowMoney" icon="edit" @click-icon="isShowMoney=!isShowMoney" />
+                                    <van-field v-model="price"  :placeholder="defultPrice +'元'" @click="isShowMoney=!isShowMoney" icon="edit" disabled @click-icon="isShowMoney=!isShowMoney" />
                                 </van-cell-group>
                             </div>
                             <van-popup v-model="isShowMoney" @change="onChange" position="bottom">
@@ -20,11 +20,11 @@
                             <h4>借款期限</h4>
                             <div class="flex">
                                 <van-cell-group>
-                                    <van-field class="limit" v-model="dealine" :placeholder="defultTime+type" @click="isShowTime=!isShowTime" icon="edit" @click-icon="isShowTime=!isShowTime" />
+                                    <van-field class="limit" v-model="deadline" :placeholder="defultTime+type" @click="isShowTime=!isShowTime" icon="edit" disabled @click-icon="isShowTime=!isShowTime" />
                                 </van-cell-group>
                             </div>
                             <van-popup v-model="isShowTime" @change="onChange" position="bottom">
-                                <van-picker show-toolbar :columns="deadline" @cancel="onCancel" @confirm="setTime" />
+                                <van-picker show-toolbar :columns="deadlines" @cancel="onCancel" @confirm="setTime" />
                             </van-popup>
                         </van-col>
                     </van-row>
@@ -35,7 +35,7 @@
                         </van-col>
                         <van-col span="8" class="center">
                             <span>利息和费用</span>
-                            <van-field v-model="totleAmount" icon="question" @click-icon="show=!show" />
+                            <van-field v-model="totleAmount" icon="question" @click-icon="show=!show" disabled />
                         </van-col>
                         <van-col span="8" class="textright">
                             <span>到账金额</span>
@@ -57,7 +57,7 @@
                                 </van-row>
                                 <van-row type="flex" justify="space-between">
                                     <van-col span="10">总共</van-col>
-                                    <van-col class="textright" span="10">{{totleAmount}}元</van-col>
+                                    <van-col class="textright" span="10">{{totleAmount}}</van-col>
                                 </van-row>
                             </div>
                         </van-dialog>
@@ -67,29 +67,30 @@
                 <split></split>
                 <div class="application card">
                     <h3 class="cardtitle van-hairline--bottom"><span>申请材料</span></h3>
-                    <van-row type="flex" class="material-list van-hairline--bottom" justify="space-between" v-for="(item,index) in material" :key="index" ref="list">
-                        <van-cell @click="toDetail(index)" :title="urlName[index]" :class="item==1?'green':'blue'" is-link :value="item==1?'已认证': item==2?'重新认证':'去认证'" v-if="item != -1" />
+                    <van-row type="flex" class="material-list van-hairline--bottom" justify="space-between" v-for="(item,index) in material" :key="index" ref="list" >
+                        <van-cell @click="toDetail(index)" :title="urlName[index].title" :class="item==1?'green':'blue'" is-link :value="item==1?'已认证': item==2?'重新认证':'去认证'" v-if="item != -1" />
                     </van-row>
                 </div>
                 <split></split>
-                <van-button type="primary" bottom-action @click="applyBtn">立即借款</van-button>
+                <van-button type="primary" bottom-action @click="creditVerify" :disabled="disabled">立即借款</van-button>
             </div>
         </div>
     </div>
 </template>
 <script>
-import { baseInfo, datum, calcu, orderApply } from "@/util/axios.js";
+import { baseInfo, datum, getUrl, calcu, orderApply } from "@/util/axios.js";
+import { setItem, getItem, delItem } from "@/util/util.js";
 export default {
   data() {
     return {
       columns: ["1000", "2000", "3000", "4000", "200000"],
-      deadline: ["6", "12"],
+      deadlines: ["6", "12"],
       isShowMoney: false,
       isShowTime: false,
       price: "",
-      dealine: "",
-      defultTime: "",
-      priceMax: "",
+      deadline: "",
+      defultPrice: getItem("price"),
+      defultTime: getItem("deadline"),
       termType: {
         1: "天",
         2: "月"
@@ -103,15 +104,18 @@ export default {
       manageAmount: "0.00",
       show: false,
       urlName: {
-        certAuth: "身份认证",
-        applyInfo: "申请信息",
-        otherInfo: "其他信息",
-        humanRelation: "人际关系",
-        creditAuth: "信用认证"
+        certAuth: { title: "身份认证", index: 0 },
+        applyInfo: { title: "申请信息", index: 1 },
+        otherInfo: { title: "其他信息", index: 2 },
+        humanRelation: { title: "人际关系", index: 3 },
+        creditAuth: { title: "信用认证", index: 4 }
       },
       material: {},
       productId: "",
-      disabled: false
+      disabled: false,
+      activeMaterial: "",
+      certLiving: true,
+      orderNum: ""
     };
   },
   mounted() {
@@ -125,20 +129,39 @@ export default {
         this.material = res.data.infoList;
         let priceMin = res.data.proInfo.priceMin;
         this.priceMax = res.data.proInfo.priceMax;
+        if (!this.defultPrice) {
+          this.defultPrice = res.data.proInfo.priceMax;
+        } else {
+          this.defultPrice = getItem("price");
+          this.price = getItem("price") + "元";
+        }
         let priceIncrement = res.data.proInfo.priceIncrement;
         let arr = [];
-        for (var i = priceMin; i <= this.priceMax; i = i + priceIncrement) {
+        for (var i = priceMin; i <= this.priceMax; i += priceIncrement) {
           arr.push(i);
         }
+        arr.reverse();
+        for (var key in this.material) {
+          if (this.material[key] != 1 && this.material[key] != -1) {
+            this.activeMaterial = key;
+            break;
+          }
+        }
         this.columns = arr;
-        this.deadline = res.data.proInfo.productTerm.split(",");
-        this.defultTime = this.deadline[this.deadline.length - 1];
         let typeValue = res.data.proInfo.termType;
         this.type = this.termType[typeValue];
-        this.productId = res.data.proInfo.productId;
+        this.deadlines = res.data.proInfo.productTerm.split(",");
+        if (!this.defultTime) {
+          this.defultTime = this.deadlines[this.deadlines.length - 1];
+        } else {
+          this.defultTime = getItem("deadline");
+          this.deadline = getItem("deadline").toString() + this.type;
+        }
 
+        this.productId = res.data.proInfo.productId;
+        this.certLiving = res.data.proInfo.certLiving;
         let defultData = {
-          price: this.priceMax.toString(),
+          price: this.defultPrice.toString(),
           term: this.defultTime,
           type: this.type === "天" ? 1 : 2
         };
@@ -147,6 +170,7 @@ export default {
     },
     async counter(data) {
       let res = await calcu(data);
+      console.log(data);
       console.log(res);
       if (res.code == 200) {
         this.actualAmount = res.data.actual_amount.toFixed(2);
@@ -159,6 +183,7 @@ export default {
     },
     onConfirm(value, index) {
       this.price = value + "元";
+      setItem("price", value);
       let data = {
         price: value.toString(),
         term: this.dealine
@@ -177,7 +202,8 @@ export default {
       console.log(index);
     },
     setTime(value, index) {
-      this.dealine = value + this.type;
+      this.deadline = value + this.type;
+      setItem("deadline", value);
       let data = {
         price: this.price
           ? this.price.replace(/[^0-9]/gi, "").toString()
@@ -196,10 +222,25 @@ export default {
       }
     },
     toDetail(url) {
-      if (url == "creditAuth" || url == "otherInfo") {
+      if (this.activeMaterial) {
+        let activeIndex = this.urlName[this.activeMaterial].index;
+        let index = this.urlName[url].index;
+        if (activeIndex < index) {
+          this.$toast("请按顺序认证");
+          return;
+        }
+      }
+      let urlName = ["creditAuth", "otherInfo"];
+      console.log(urlName.indexOf(url));
+      if (urlName.indexOf(url) >= 0) {
         this.$router.push({
           path: "/application/" + url,
           query: { productId: this.productId }
+        });
+      } else if (url == "certAuth") {
+        this.$router.push({
+          path: "/application/" + url,
+          query: { certLiving: this.certLiving }
         });
       } else {
         this.$router.push({
@@ -208,23 +249,58 @@ export default {
       }
     },
     async applyBtn() {
+      //   this.disabled = true;
       let data = {
-        price: this.priceMax.toString(),
-        term: this.defultTime,
+        price: this.price
+          ? this.price.replace(/[^0-9]/gi, "").toString()
+          : this.priceMax.toString(),
+        term: this.deadline
+          ? this.deadline.replace(/[^0-9]/gi, "")
+          : this.defultTime,
         type: this.type === "天" ? 1 : 2
       };
       console.log(data);
       let res = await orderApply(data);
       console.log(res);
+      if (res.code == 200) {
+        this.orderNum = res.data;
+        delItem("price");
+        delItem("deadline");
+        this.disabled = false;
+        // this.$router.push({ path: "/success" });
+        this.toPath(
+          1,
+          escape("http://h5.xinyzx.com:82/istarStage/#/success?type=1")
+        );
+      } else {
+        this.disabled = true;
+        this.$toast(res.msg);
+      }
     },
-    creditVerify(item) {
+    async toPath(type, url) {
+      let data = {
+        orderNum: this.orderNum,
+        type: type,
+        returnUrl: url
+      };
+      console.log(data);
+      let res = await getUrl(data);
+      console.log(res);
+      if (res.code == 200) {
+        location.href = res.data;
+      }
+    },
+    creditVerify() {
       for (var i in this.material) {
         if (this.material[i] == 0) {
-          this.$toast(urlName[this.material[i]] + "未认证");
+          this.$toast(this.urlName[i].title + "未认证");
+          return;
         } else if (this.material[i] == 2) {
-          this.$toast(urlName[this.material[i]] + "需重新认证");
+          this.$toast(this.urlName[i].title + "需重新认证");
+          return;
         }
       }
+      this.applyBtn();
     }
   }
 };
@@ -259,23 +335,23 @@ export default {
         input {
           background: none;
           color: $orange;
-          font-size: rem(60px);
+          font-size: rem(50px);
           &::placeholder {
             color: $orange;
           }
         }
       }
       .limit {
-        width: 45%;
-        padding-top: rem(15px);
-        input {
-          color: $black;
-          font-size: rem(30px);
-          padding-top: rem(10px);
-          &::placeholder {
-            color: $black;
-          }
-        }
+        width: 60%;
+        // padding-top: rem(15px);
+        // input {
+        //   color: $black;
+        //   font-size: rem(30px);
+        //   padding-top: rem(10px);
+        //   &::placeholder {
+        //     color: $black;
+        //   }
+        // }
       }
     }
 

@@ -2,8 +2,8 @@
     <div class="quesDetail">
         <v-header :title="title"></v-header>
         <div class="container card">
-           <h4>申请借款</h4>
-            <p>第一步：下载星分期APP注册登录 <br>第二步：填写个人信息，上传身份证件，信用认证信息 <br>第三步：提交认证，等待审核结果<br> 第四步：审核通过，签约合同放款。</p>
+           <h4>如何还款</h4>
+            <p>自动还款：您在还款日之前足额存入绑定的银行卡，合作银行将按时自动扣划。<br/>手动还款：可通过银行卡进行手动还款，具体操作请登录App还款界面。 </p>
         </div>
         
     </div>
@@ -13,7 +13,7 @@ import { setItem } from "@/util/util.js";
 export default {
   data() {
     return {
-      title: "问题详情"
+      title: "如何还款"
     };
   },
   mounted() {},
@@ -24,8 +24,10 @@ export default {
 @import "../../assets/style/common.scss";
 @import "../../assets/style/style.scss";
 .quesDetail {
+  padding-top: rem(95px);
   .container {
     text-align: center;
+    padding-bottom: rem(35px);
     padding-left: rem(35px);
     padding-right: rem(35px);
     h4 {
@@ -34,7 +36,6 @@ export default {
     }
     p {
       text-align: justify;
-      padding: rem(40px) 0;
     }
   }
 }
