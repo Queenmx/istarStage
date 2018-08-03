@@ -187,7 +187,7 @@ export default {
     },
     choseAdress(value, index) {
       let adressData = [];
-      for (var i = 0; i < value.length; i++) {
+      for (let i = 0; i < value.length; i++) {
         adressData.push(value[i].name);
       }
       this.adress = adressData.join(",");
@@ -195,7 +195,7 @@ export default {
     },
     perAdress(value, index) {
       let adressData = [];
-      for (var i = 0; i < value.length; i++) {
+      for (let i = 0; i < value.length; i++) {
         adressData.push(value[i].name);
       }
       this.peradress = adressData.join(",");
@@ -203,7 +203,7 @@ export default {
     },
     unitAdress(value, index) {
       let adressData = [];
-      for (var i = 0; i < value.length; i++) {
+      for (let i = 0; i < value.length; i++) {
         adressData.push(value[i].name);
       }
       this.unitadress = adressData.join(",");
@@ -309,10 +309,10 @@ export default {
       }
     },
     fixedFooter() {
-      var windheight = document.body.clientHeight; /*未唤起键盘时当前窗口高度*/
-      var self = this;
+      let windheight = document.body.clientHeight; /*未唤起键盘时当前窗口高度*/
+      let self = this;
       window.onresize = function() {
-        var docheight = document.body.clientHeight; /*唤起键盘时当前窗口高度*/
+        let docheight = document.body.clientHeight; /*唤起键盘时当前窗口高度*/
         if (docheight < windheight) {
           /*当唤起键盘高度小于未唤起键盘高度时执行*/
           self.isShowbtn = false;

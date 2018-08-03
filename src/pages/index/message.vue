@@ -54,7 +54,7 @@ export default {
       let res = await getMessageList(data);
       console.log(res);
       if (res.code == 200) {
-        var that = this;
+        let that = this;
         this.listdata = res.data.list;
         this.pageEnd = res.data.pages;
         if (this.listdata) {

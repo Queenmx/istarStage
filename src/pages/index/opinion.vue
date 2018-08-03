@@ -28,9 +28,9 @@ export default {
   mounted() {},
   methods: {
     async submitAsk() {
-      var content = this.content;
+      let content = this.content;
 
-      var that = this;
+      let that = this;
 
       if (content.length > 200) {
         this.$toast("请将字数控制在200字以内");

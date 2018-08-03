@@ -47,7 +47,7 @@ export default {
     },
     //实名认证
     async realNameAuth() {
-      var that = this;
+      let that = this;
       let data = {
         cusName: this.name,
         cusIdcard: this.idCard,
@@ -67,7 +67,7 @@ export default {
       }
     },
     verifyName() {
-      var reg = /^[\u4E00-\u9FA5\uf900-\ufa2d·s]{2,20}$/;
+      let reg = /^[\u4E00-\u9FA5\uf900-\ufa2d·s]{2,20}$/;
       if (!reg.test(this.name)) {
         this.$toast("请输入正确的姓名");
         this.name = "";

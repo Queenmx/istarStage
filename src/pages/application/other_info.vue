@@ -102,7 +102,7 @@ export default {
     },
     choseAdress(value, index) {
       let adressData = [];
-      for (var i = 0; i < value.length; i++) {
+      for (let i = 0; i < value.length; i++) {
         adressData.push(value[i].name);
       }
       this.adress = adressData.join(",");
@@ -110,7 +110,7 @@ export default {
     },
     perAdress(value, index) {
       let adressData = [];
-      for (var i = 0; i < value.length; i++) {
+      for (let i = 0; i < value.length; i++) {
         adressData.push(value[i].name);
       }
       this.peradress = adressData.join(",");
@@ -118,7 +118,7 @@ export default {
     },
     unitAdress(value, index) {
       let adressData = [];
-      for (var i = 0; i < value.length; i++) {
+      for (let i = 0; i < value.length; i++) {
         adressData.push(value[i].name);
       }
       this.unitadress = adressData.join(",");

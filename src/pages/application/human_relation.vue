@@ -146,8 +146,8 @@ export default {
     async relationship() {
       let data = [];
       let tep = {};
-      var temp = {};
-      var that = this;
+      let temp = {};
+      let that = this;
       tep.contactName = that.name;
       tep.contactPhone = that.phone;
       tep.contactRelation = that.direct;
@@ -165,10 +165,10 @@ export default {
       }
     },
     fixedFooter() {
-      var windheight = document.body.clientHeight; /*未唤起键盘时当前窗口高度*/
-      var self = this;
+      let windheight = document.body.clientHeight; /*未唤起键盘时当前窗口高度*/
+      let self = this;
       window.onresize = function() {
-        var docheight = document.body.clientHeight; /*唤起键盘时当前窗口高度*/
+        let docheight = document.body.clientHeight; /*唤起键盘时当前窗口高度*/
         if (docheight < windheight) {
           /*当唤起键盘高度小于未唤起键盘高度时执行*/
           self.isShowbtn = false;

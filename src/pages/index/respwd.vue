@@ -32,7 +32,7 @@ export default {
   mounted() {},
   methods: {
     async updatePwd() {
-      var that = this;
+      let that = this;
       let data = {
         cusPassword: this.oldPwd,
         newPwd: this.newPwd

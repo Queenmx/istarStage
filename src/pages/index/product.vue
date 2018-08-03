@@ -137,11 +137,11 @@ export default {
         }
         let priceIncrement = res.data.proInfo.priceIncrement;
         let arr = [];
-        for (var i = priceMin; i <= this.priceMax; i += priceIncrement) {
+        for (let i = priceMin; i <= this.priceMax; i += priceIncrement) {
           arr.push(i);
         }
         arr.reverse();
-        for (var key in this.material) {
+        for (let key in this.material) {
           if (this.material[key] != 1 && this.material[key] != -1) {
             this.activeMaterial = key;
             break;
@@ -291,7 +291,7 @@ export default {
       }
     },
     creditVerify() {
-      for (var i in this.material) {
+      for (let i in this.material) {
         if (this.material[i] == 0) {
           this.$toast(this.urlName[i].title + "未认证");
           return;
